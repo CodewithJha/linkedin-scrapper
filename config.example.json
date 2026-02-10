@@ -1,0 +1,30 @@
+{
+  "keywords": "intern",
+  "keywordVariants": [
+    "data engineer",
+    "python data engineer",
+    "data pipeline engineer",
+    "backend and data pipeline engineer",
+    "cloud data engineer",
+    "analytics engineer",
+    "etl engineer"
+  ],
+  "location": "Remote",
+  "resultsPerSession": 40,
+  "sessionsPerDay": 3,
+  "minGapHours": 5,
+  "maxGapHours": 7,
+  "headless": true,
+  "usePublicSearch": true,
+  "timePosted": "past24h",
+  "enrichJobDetails": true,
+  "outputDir": "out",
+  "email": {
+    "smtpHost": "smtp.example.com",
+    "smtpPort": 587,
+    "smtpUser": "example_user",
+    "smtpPass": "example_password",
+    "to": "you@example.com",
+    "from": "LinkedIn Scraper <you@example.com>"
+  }
+}

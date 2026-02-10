@@ -1,0 +1,54 @@
+name: Daily LinkedIn Scrape
+
+on:
+  # Run every day at 6:00 AM UTC (11:30 AM IST)
+  schedule:
+    - cron: '0 6 * * *'
+  
+  # Also allow manual trigger from GitHub UI
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  scrape:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+      
+      - name: Install dependencies
+        run: npm ci
+      
+      - name: Install Playwright browsers
+        run: npx playwright install chromium
+      
+      - name: Run scraper
+        run: npm run scrape:once
+        env:
+          # Optional: Add LinkedIn cookie as a secret for logged-in scraping
+          LINKEDIN_COOKIE: ${{ secrets.LINKEDIN_COOKIE }}
+      
+      - name: Commit and push new CSVs
+        run: |
+          git config --local user.email "github-actions[bot]@users.noreply.github.com"
+          git config --local user.name "github-actions[bot]"
+          
+          # Add any new/modified files in out/ and data/
+          git add out/*.csv data/seen-jobs.json || true
+          
+          # Check if there are changes to commit
+          if git diff --staged --quiet; then
+            echo "No new jobs found, nothing to commit"
+          else
+            git commit -m "🤖 Daily scrape: $(date +'%Y-%m-%d')"
+            git push
+          fi

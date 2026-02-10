@@ -1,0 +1,19 @@
+{
+  "name": "linkedin-scrapper",
+  "version": "0.1.0",
+  "type": "module",
+  "main": "src/main.js",
+  "scripts": {
+    "start": "node src/server.js",
+    "start:scheduler": "node src/main.js",
+    "scrape:once": "node src/runOnce.js"
+  },
+  "dependencies": {
+    "csv-writer": "^1.6.0",
+    "dotenv": "^16.4.5",
+    "express": "^4.19.2",
+    "multer": "^1.4.5-lts.1",
+    "nodemailer": "^6.9.15",
+    "playwright": "^1.45.2"
+  }
+}

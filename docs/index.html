@@ -1,0 +1,500 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>LinkedIn Jobs Dashboard</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet" />
+    <style>
+      :root {
+        --bg-primary: #0f1419;
+        --bg-secondary: #1a1f26;
+        --bg-card: rgba(26, 31, 38, 0.8);
+        --bg-card-hover: rgba(36, 43, 52, 0.9);
+        --border: rgba(255, 255, 255, 0.06);
+        --border-light: rgba(255, 255, 255, 0.1);
+        --text-primary: #f1f5f9;
+        --text-secondary: #94a3b8;
+        --text-muted: #64748b;
+        --accent: #d4a574;
+        --accent-hover: #e5b885;
+        --accent-glow: rgba(212, 165, 116, 0.15);
+        --success: #4ade80;
+        --success-glow: rgba(74, 222, 128, 0.2);
+      }
+
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: 'DM Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+        background: var(--bg-primary);
+        color: var(--text-primary);
+        min-height: 100vh;
+        line-height: 1.6;
+      }
+
+      body::before {
+        content: '';
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-image: 
+          linear-gradient(rgba(255, 255, 255, 0.02) 1px, transparent 1px),
+          linear-gradient(90deg, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
+        background-size: 60px 60px;
+        pointer-events: none;
+        z-index: 0;
+      }
+
+      .container {
+        max-width: 1100px;
+        margin: 0 auto;
+        padding: 0 24px;
+        position: relative;
+        z-index: 1;
+      }
+
+      header {
+        padding: 32px 0;
+        border-bottom: 1px solid var(--border);
+      }
+
+      .header-content {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        flex-wrap: wrap;
+        gap: 16px;
+      }
+
+      .logo {
+        display: flex;
+        align-items: center;
+        gap: 14px;
+      }
+
+      .logo-icon {
+        width: 44px;
+        height: 44px;
+        background: linear-gradient(135deg, var(--accent), #c49a6c);
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 20px;
+        box-shadow: 0 4px 20px var(--accent-glow);
+      }
+
+      .logo-text h1 {
+        font-family: 'Outfit', sans-serif;
+        font-size: 22px;
+        font-weight: 600;
+        letter-spacing: -0.5px;
+      }
+
+      .logo-text p {
+        font-size: 13px;
+        color: var(--text-muted);
+        margin-top: 2px;
+      }
+
+      .badge {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        padding: 8px 16px;
+        background: var(--bg-card);
+        border: 1px solid var(--border);
+        border-radius: 100px;
+        font-size: 13px;
+        font-weight: 500;
+      }
+
+      .badge-dot {
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        background: var(--success);
+        box-shadow: 0 0 12px var(--success-glow);
+        animation: pulse 2s ease-in-out infinite;
+      }
+
+      @keyframes pulse {
+        0%, 100% { opacity: 1; transform: scale(1); }
+        50% { opacity: 0.7; transform: scale(1.1); }
+      }
+
+      main {
+        padding: 40px 0 60px;
+      }
+
+      .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 16px;
+        margin-bottom: 32px;
+      }
+
+      .stat-card {
+        background: var(--bg-card);
+        border: 1px solid var(--border);
+        border-radius: 16px;
+        padding: 24px;
+        backdrop-filter: blur(10px);
+      }
+
+      .stat-value {
+        font-family: 'Outfit', sans-serif;
+        font-size: 32px;
+        font-weight: 700;
+        color: var(--text-primary);
+      }
+
+      .stat-label {
+        font-size: 14px;
+        color: var(--text-muted);
+        margin-top: 4px;
+      }
+
+      .section-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 16px;
+      }
+
+      .section-title {
+        font-family: 'Outfit', sans-serif;
+        font-size: 18px;
+        font-weight: 600;
+      }
+
+      .section-subtitle {
+        font-size: 13px;
+        color: var(--text-muted);
+      }
+
+      .files-list {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+      }
+
+      .file-item {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 16px 20px;
+        background: var(--bg-card);
+        border: 1px solid var(--border);
+        border-radius: 12px;
+        transition: all 0.2s ease;
+      }
+
+      .file-item:hover {
+        border-color: var(--border-light);
+        background: var(--bg-card-hover);
+      }
+
+      .file-info {
+        display: flex;
+        align-items: center;
+        gap: 14px;
+      }
+
+      .file-icon {
+        width: 40px;
+        height: 40px;
+        background: var(--accent-glow);
+        border-radius: 10px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: var(--accent);
+        font-size: 18px;
+      }
+
+      .file-details {
+        display: flex;
+        flex-direction: column;
+        gap: 2px;
+      }
+
+      .file-name {
+        font-weight: 600;
+        font-size: 14px;
+        color: var(--text-primary);
+      }
+
+      .file-meta {
+        font-size: 12px;
+        color: var(--text-muted);
+      }
+
+      .file-download {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        padding: 8px 16px;
+        background: transparent;
+        border: 1px solid var(--border);
+        border-radius: 8px;
+        color: var(--text-secondary);
+        font-size: 13px;
+        font-weight: 500;
+        text-decoration: none;
+        transition: all 0.2s ease;
+      }
+
+      .file-download:hover {
+        border-color: var(--accent);
+        color: var(--accent);
+        background: var(--accent-glow);
+      }
+
+      .empty-state {
+        text-align: center;
+        padding: 48px 24px;
+        color: var(--text-muted);
+      }
+
+      .empty-state-icon {
+        font-size: 48px;
+        margin-bottom: 16px;
+        opacity: 0.5;
+      }
+
+      .loading {
+        text-align: center;
+        padding: 48px;
+        color: var(--text-muted);
+      }
+
+      .spinner {
+        width: 24px;
+        height: 24px;
+        border: 2px solid var(--border);
+        border-top-color: var(--accent);
+        border-radius: 50%;
+        animation: spin 0.8s linear infinite;
+        margin: 0 auto 16px;
+      }
+
+      @keyframes spin {
+        to { transform: rotate(360deg); }
+      }
+
+      .info-banner {
+        background: var(--accent-glow);
+        border: 1px solid rgba(212, 165, 116, 0.3);
+        border-radius: 12px;
+        padding: 16px 20px;
+        margin-bottom: 24px;
+        font-size: 14px;
+        color: var(--text-secondary);
+      }
+
+      .info-banner strong {
+        color: var(--accent);
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <header>
+        <div class="header-content">
+          <div class="logo">
+            <div class="logo-icon">⚡</div>
+            <div class="logo-text">
+              <h1>Jobs Dashboard</h1>
+              <p>Daily LinkedIn data engineer jobs (India)</p>
+            </div>
+          </div>
+          <div class="badge">
+            <span class="badge-dot"></span>
+            <span>Auto-updated daily</span>
+          </div>
+        </div>
+      </header>
+
+      <main>
+        <div class="info-banner">
+          <strong>📅 Automated Pipeline:</strong> New jobs are scraped every day at 11:30 AM IST and CSV files are automatically committed to this repository.
+        </div>
+
+        <div class="stats-grid">
+          <div class="stat-card">
+            <div class="stat-value" id="total-files">--</div>
+            <div class="stat-label">CSV exports available</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-value" id="last-update">--</div>
+            <div class="stat-label">Last update</div>
+          </div>
+        </div>
+
+        <div class="section-header">
+          <div>
+            <h2 class="section-title">Recent Exports</h2>
+            <p class="section-subtitle" id="files-subtitle">Loading...</p>
+          </div>
+        </div>
+
+        <div class="files-list" id="files-list">
+          <div class="loading">
+            <div class="spinner"></div>
+            <p>Loading CSV files...</p>
+          </div>
+        </div>
+      </main>
+    </div>
+
+    <script>
+      // GitHub repository info
+      const GITHUB_USER = 'CodewithJha';
+      const GITHUB_REPO = 'linkedin-scrapper';
+      const BRANCH = 'main';
+
+      const filesListEl = document.getElementById('files-list');
+      const filesSubtitleEl = document.getElementById('files-subtitle');
+      const totalFilesEl = document.getElementById('total-files');
+      const lastUpdateEl = document.getElementById('last-update');
+
+      function formatRelativeTime(dateStr) {
+        const date = new Date(dateStr);
+        const now = new Date();
+        const diffMs = now - date;
+        const diffMins = Math.floor(diffMs / 60000);
+        const diffHours = Math.floor(diffMs / 3600000);
+        const diffDays = Math.floor(diffMs / 86400000);
+
+        if (diffMins < 1) return 'Just now';
+        if (diffMins < 60) return `${diffMins}m ago`;
+        if (diffHours < 24) return `${diffHours}h ago`;
+        if (diffDays === 1) return 'Yesterday';
+        return date.toLocaleDateString();
+      }
+
+      async function fetchFiles() {
+        try {
+          // Use GitHub API to list files in out/ directory
+          const apiUrl = `https://api.github.com/repos/${GITHUB_USER}/${GITHUB_REPO}/contents/out?ref=${BRANCH}`;
+          const response = await fetch(apiUrl);
+          
+          if (!response.ok) {
+            throw new Error('Failed to fetch files');
+          }
+
+          const files = await response.json();
+          
+          // Filter for CSV files and sort by name (newest first based on timestamp in filename)
+          const csvFiles = files
+            .filter(f => f.name.endsWith('.csv'))
+            .sort((a, b) => b.name.localeCompare(a.name))
+            .slice(0, 20);
+
+          if (csvFiles.length === 0) {
+            filesListEl.innerHTML = `
+              <div class="empty-state">
+                <div class="empty-state-icon">📂</div>
+                <p>No CSV files yet. The first scrape will run automatically.</p>
+              </div>
+            `;
+            filesSubtitleEl.textContent = 'No files yet';
+            totalFilesEl.textContent = '0';
+            lastUpdateEl.textContent = '--';
+            return;
+          }
+
+          totalFilesEl.textContent = csvFiles.length;
+          filesSubtitleEl.textContent = `${csvFiles.length} file${csvFiles.length > 1 ? 's' : ''} available`;
+
+          // Get last commit info for the most recent file
+          try {
+            const commitUrl = `https://api.github.com/repos/${GITHUB_USER}/${GITHUB_REPO}/commits?path=out/${csvFiles[0].name}&per_page=1`;
+            const commitRes = await fetch(commitUrl);
+            if (commitRes.ok) {
+              const commits = await commitRes.json();
+              if (commits.length > 0) {
+                lastUpdateEl.textContent = formatRelativeTime(commits[0].commit.committer.date);
+              }
+            }
+          } catch (e) {
+            // Fallback: extract date from filename
+            const match = csvFiles[0].name.match(/(\d{4}-\d{2}-\d{2})/);
+            if (match) {
+              lastUpdateEl.textContent = match[1];
+            }
+          }
+
+          filesListEl.innerHTML = csvFiles.map(f => {
+            // Extract date from filename: linkedin-jobs-2026-02-10T...
+            const dateMatch = f.name.match(/(\d{4})-(\d{2})-(\d{2})T(\d{2})-(\d{2})/);
+            let dateStr = 'Unknown date';
+            if (dateMatch) {
+              const [, year, month, day, hour, min] = dateMatch;
+              const date = new Date(`${year}-${month}-${day}T${hour}:${min}:00`);
+              dateStr = date.toLocaleDateString('en-US', {
+                month: 'short',
+                day: 'numeric',
+                year: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit'
+              });
+            }
+
+            // Raw download URL
+            const downloadUrl = `https://raw.githubusercontent.com/${GITHUB_USER}/${GITHUB_REPO}/${BRANCH}/out/${f.name}`;
+
+            return `
+              <div class="file-item">
+                <div class="file-info">
+                  <div class="file-icon">📄</div>
+                  <div class="file-details">
+                    <span class="file-name">${f.name}</span>
+                    <span class="file-meta">${dateStr}</span>
+                  </div>
+                </div>
+                <a href="${downloadUrl}" class="file-download" download>
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                    <polyline points="7 10 12 15 17 10"></polyline>
+                    <line x1="12" y1="15" x2="12" y2="3"></line>
+                  </svg>
+                  Download
+                </a>
+              </div>
+            `;
+          }).join('');
+
+        } catch (err) {
+          console.error('Error fetching files:', err);
+          filesListEl.innerHTML = `
+            <div class="empty-state">
+              <div class="empty-state-icon">⚠️</div>
+              <p>Could not load files. Make sure the repository is public and the username/repo are correct.</p>
+              <p style="margin-top: 8px; font-size: 12px; color: var(--text-muted);">
+                Edit docs/index.html and update GITHUB_USER and GITHUB_REPO variables.
+              </p>
+            </div>
+          `;
+          filesSubtitleEl.textContent = 'Error loading files';
+        }
+      }
+
+      // Initial load
+      fetchFiles();
+
+      // Refresh every 5 minutes
+      setInterval(fetchFiles, 5 * 60 * 1000);
+    </script>
+  </body>
+</html>
