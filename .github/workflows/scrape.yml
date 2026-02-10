@@ -5,8 +5,25 @@ on:
   schedule:
     - cron: '0 6 * * *'
   
-  # Also allow manual trigger from GitHub UI
+  # Allow manual trigger with custom inputs
   workflow_dispatch:
+    inputs:
+      keywords:
+        description: 'Job keywords (e.g., data engineer)'
+        required: false
+        default: ''
+      location:
+        description: 'Location (e.g., India, Remote)'
+        required: false
+        default: ''
+      results:
+        description: 'Number of results (10-100)'
+        required: false
+        default: ''
+      timePosted:
+        description: 'Time filter (past24h, pastWeek, any)'
+        required: false
+        default: ''
 
 permissions:
   contents: write
@@ -31,10 +48,43 @@ jobs:
       - name: Install Playwright browsers
         run: npx playwright install chromium
       
+      - name: Create runtime config
+        run: |
+          # Start with default config
+          if [ -f config.example.json ]; then
+            cp config.example.json config.json
+          else
+            echo '{}' > config.json
+          fi
+          
+          # Override with workflow inputs if provided
+          KEYWORDS="${{ github.event.inputs.keywords }}"
+          LOCATION="${{ github.event.inputs.location }}"
+          RESULTS="${{ github.event.inputs.results }}"
+          TIME_POSTED="${{ github.event.inputs.timePosted }}"
+          
+          # Use Node.js to merge config
+          node -e "
+            const fs = require('fs');
+            let config = {};
+            try { config = JSON.parse(fs.readFileSync('config.json', 'utf-8')); } catch {}
+            
+            if ('$KEYWORDS') config.keywords = '$KEYWORDS';
+            if ('$LOCATION') config.location = '$LOCATION';
+            if ('$RESULTS' && !isNaN(parseInt('$RESULTS'))) config.resultsPerSession = parseInt('$RESULTS');
+            if ('$TIME_POSTED') config.timePosted = '$TIME_POSTED';
+            
+            // Always set headless and output
+            config.headless = true;
+            config.outputDir = 'out';
+            
+            fs.writeFileSync('config.json', JSON.stringify(config, null, 2));
+            console.log('Config:', config);
+          "
+      
       - name: Run scraper
         run: npm run scrape:once
         env:
-          # Optional: Add LinkedIn cookie as a secret for logged-in scraping
           LINKEDIN_COOKIE: ${{ secrets.LINKEDIN_COOKIE }}
       
       - name: Commit and push new CSVs
@@ -49,6 +99,15 @@ jobs:
           if git diff --staged --quiet; then
             echo "No new jobs found, nothing to commit"
           else
-            git commit -m "🤖 Daily scrape: $(date +'%Y-%m-%d')"
+            KEYWORDS="${{ github.event.inputs.keywords }}"
+            LOCATION="${{ github.event.inputs.location }}"
+            MSG="🤖 Scrape: $(date +'%Y-%m-%d %H:%M')"
+            if [ -n "$KEYWORDS" ]; then
+              MSG="$MSG | $KEYWORDS"
+            fi
+            if [ -n "$LOCATION" ]; then
+              MSG="$MSG in $LOCATION"
+            fi
+            git commit -m "$MSG"
             git push
           fi

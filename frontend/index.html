@@ -1,0 +1,702 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>LinkedIn Jobs Scraper</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet" />
+    <style>
+      :root {
+        --bg-primary: #0a0c10;
+        --bg-secondary: #12151c;
+        --bg-card: rgba(18, 21, 28, 0.9);
+        --bg-card-hover: rgba(26, 31, 42, 0.95);
+        --border: rgba(255, 255, 255, 0.08);
+        --border-light: rgba(255, 255, 255, 0.12);
+        --text-primary: #f1f5f9;
+        --text-secondary: #94a3b8;
+        --text-muted: #64748b;
+        --accent: #22d3ee;
+        --accent-hover: #67e8f9;
+        --accent-glow: rgba(34, 211, 238, 0.15);
+        --success: #4ade80;
+        --success-glow: rgba(74, 222, 128, 0.2);
+        --warning: #fbbf24;
+        --warning-glow: rgba(251, 191, 36, 0.2);
+      }
+
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: 'DM Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+        background: var(--bg-primary);
+        color: var(--text-primary);
+        min-height: 100vh;
+        line-height: 1.6;
+      }
+
+      body::before {
+        content: '';
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: 
+          radial-gradient(ellipse at 20% 20%, rgba(34, 211, 238, 0.05) 0%, transparent 50%),
+          radial-gradient(ellipse at 80% 80%, rgba(139, 92, 246, 0.05) 0%, transparent 50%);
+        pointer-events: none;
+        z-index: 0;
+      }
+
+      .container {
+        max-width: 900px;
+        margin: 0 auto;
+        padding: 0 24px;
+        position: relative;
+        z-index: 1;
+      }
+
+      header {
+        padding: 40px 0 32px;
+        text-align: center;
+      }
+
+      .logo {
+        display: inline-flex;
+        align-items: center;
+        gap: 14px;
+        margin-bottom: 12px;
+      }
+
+      .logo-icon {
+        width: 52px;
+        height: 52px;
+        background: linear-gradient(135deg, var(--accent), #8b5cf6);
+        border-radius: 14px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 24px;
+        box-shadow: 0 8px 32px var(--accent-glow);
+      }
+
+      .logo-text h1 {
+        font-family: 'Outfit', sans-serif;
+        font-size: 28px;
+        font-weight: 700;
+        letter-spacing: -0.5px;
+        background: linear-gradient(135deg, var(--text-primary), var(--accent));
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+      }
+
+      .subtitle {
+        color: var(--text-muted);
+        font-size: 15px;
+        margin-top: 8px;
+      }
+
+      main {
+        padding: 20px 0 60px;
+      }
+
+      .card {
+        background: var(--bg-card);
+        border: 1px solid var(--border);
+        border-radius: 20px;
+        padding: 32px;
+        backdrop-filter: blur(20px);
+        margin-bottom: 24px;
+      }
+
+      .card-title {
+        font-family: 'Outfit', sans-serif;
+        font-size: 18px;
+        font-weight: 600;
+        margin-bottom: 24px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+
+      .card-title-icon {
+        width: 32px;
+        height: 32px;
+        background: var(--accent-glow);
+        border-radius: 8px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 16px;
+      }
+
+      .form-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 20px;
+      }
+
+      @media (max-width: 600px) {
+        .form-grid {
+          grid-template-columns: 1fr;
+        }
+      }
+
+      .form-group {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+      }
+
+      .form-group.full-width {
+        grid-column: 1 / -1;
+      }
+
+      label {
+        font-size: 13px;
+        font-weight: 500;
+        color: var(--text-secondary);
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+      }
+
+      input, select {
+        width: 100%;
+        padding: 14px 18px;
+        background: var(--bg-primary);
+        border: 1px solid var(--border);
+        border-radius: 12px;
+        color: var(--text-primary);
+        font-family: 'DM Sans', sans-serif;
+        font-size: 15px;
+        transition: all 0.2s ease;
+      }
+
+      input::placeholder {
+        color: var(--text-muted);
+      }
+
+      input:focus, select:focus {
+        outline: none;
+        border-color: var(--accent);
+        box-shadow: 0 0 0 3px var(--accent-glow);
+      }
+
+      .btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
+        padding: 16px 32px;
+        border: none;
+        border-radius: 12px;
+        font-family: 'Outfit', sans-serif;
+        font-size: 16px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        width: 100%;
+      }
+
+      .btn-primary {
+        background: linear-gradient(135deg, var(--accent), #8b5cf6);
+        color: #0a0c10;
+        box-shadow: 0 4px 24px var(--accent-glow);
+      }
+
+      .btn-primary:hover:not(:disabled) {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 32px var(--accent-glow);
+      }
+
+      .btn:disabled {
+        opacity: 0.6;
+        cursor: not-allowed;
+        transform: none;
+      }
+
+      .btn svg {
+        width: 20px;
+        height: 20px;
+      }
+
+      .spinner {
+        width: 20px;
+        height: 20px;
+        border: 2px solid transparent;
+        border-top-color: currentColor;
+        border-radius: 50%;
+        animation: spin 0.8s linear infinite;
+      }
+
+      @keyframes spin {
+        to { transform: rotate(360deg); }
+      }
+
+      .status-banner {
+        padding: 16px 20px;
+        border-radius: 12px;
+        font-size: 14px;
+        margin-top: 20px;
+        display: none;
+      }
+
+      .status-banner.show {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+      }
+
+      .status-banner.success {
+        background: rgba(74, 222, 128, 0.1);
+        border: 1px solid rgba(74, 222, 128, 0.3);
+        color: var(--success);
+      }
+
+      .status-banner.error {
+        background: rgba(239, 68, 68, 0.1);
+        border: 1px solid rgba(239, 68, 68, 0.3);
+        color: #ef4444;
+      }
+
+      .status-banner.info {
+        background: rgba(34, 211, 238, 0.1);
+        border: 1px solid rgba(34, 211, 238, 0.3);
+        color: var(--accent);
+      }
+
+      .files-section {
+        margin-top: 32px;
+      }
+
+      .section-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 16px;
+      }
+
+      .section-title {
+        font-family: 'Outfit', sans-serif;
+        font-size: 18px;
+        font-weight: 600;
+      }
+
+      .section-subtitle {
+        font-size: 13px;
+        color: var(--text-muted);
+      }
+
+      .files-list {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+      }
+
+      .file-item {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 16px 20px;
+        background: var(--bg-card);
+        border: 1px solid var(--border);
+        border-radius: 14px;
+        transition: all 0.2s ease;
+      }
+
+      .file-item:hover {
+        border-color: var(--border-light);
+        background: var(--bg-card-hover);
+      }
+
+      .file-info {
+        display: flex;
+        align-items: center;
+        gap: 14px;
+      }
+
+      .file-icon {
+        width: 42px;
+        height: 42px;
+        background: var(--accent-glow);
+        border-radius: 10px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: var(--accent);
+        font-size: 18px;
+      }
+
+      .file-details {
+        display: flex;
+        flex-direction: column;
+        gap: 2px;
+      }
+
+      .file-name {
+        font-weight: 600;
+        font-size: 14px;
+        color: var(--text-primary);
+      }
+
+      .file-meta {
+        font-size: 12px;
+        color: var(--text-muted);
+      }
+
+      .file-download {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        padding: 10px 18px;
+        background: transparent;
+        border: 1px solid var(--border);
+        border-radius: 10px;
+        color: var(--text-secondary);
+        font-size: 13px;
+        font-weight: 500;
+        cursor: pointer;
+        transition: all 0.2s ease;
+      }
+
+      .file-download:hover {
+        border-color: var(--accent);
+        color: var(--accent);
+        background: var(--accent-glow);
+      }
+
+      .empty-state {
+        text-align: center;
+        padding: 48px 24px;
+        color: var(--text-muted);
+      }
+
+      .setup-notice {
+        background: rgba(251, 191, 36, 0.1);
+        border: 1px solid rgba(251, 191, 36, 0.3);
+        border-radius: 12px;
+        padding: 16px 20px;
+        margin-bottom: 24px;
+        font-size: 14px;
+        color: var(--warning);
+      }
+
+      .setup-notice code {
+        background: rgba(0,0,0,0.3);
+        padding: 2px 6px;
+        border-radius: 4px;
+        font-size: 12px;
+      }
+
+      .token-input-group {
+        position: relative;
+      }
+
+      .token-toggle {
+        position: absolute;
+        right: 12px;
+        top: 50%;
+        transform: translateY(-50%);
+        background: none;
+        border: none;
+        color: var(--text-muted);
+        cursor: pointer;
+        padding: 4px;
+      }
+
+      .help-text {
+        font-size: 12px;
+        color: var(--text-muted);
+        margin-top: 6px;
+      }
+
+      .help-text a {
+        color: var(--accent);
+        text-decoration: none;
+      }
+
+      .help-text a:hover {
+        text-decoration: underline;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <header>
+        <div class="logo">
+          <div class="logo-icon">⚡</div>
+          <div class="logo-text">
+            <h1>LinkedIn Jobs Scraper</h1>
+          </div>
+        </div>
+        <p class="subtitle">Automated job scraping with customizable search parameters</p>
+      </header>
+
+      <main>
+        <div class="setup-notice" id="setup-notice">
+          ⚠️ <strong>First time setup:</strong> You need a GitHub Personal Access Token to trigger scrapes. 
+          <a href="https://github.com/settings/tokens/new?description=LinkedIn%20Scraper&scopes=repo,workflow" target="_blank">Create one here</a> 
+          (select <code>repo</code> and <code>workflow</code> scopes), then paste it below. It's stored only in your browser.
+        </div>
+
+        <div class="card">
+          <div class="card-title">
+            <span class="card-title-icon">🔧</span>
+            Scraper Settings
+          </div>
+          
+          <div class="form-grid">
+            <div class="form-group">
+              <label>Job Role / Keywords</label>
+              <input type="text" id="keywords" placeholder="e.g., data engineer, python developer" value="data engineer" />
+            </div>
+            
+            <div class="form-group">
+              <label>Location</label>
+              <input type="text" id="location" placeholder="e.g., India, Remote, Bangalore" value="India" />
+            </div>
+            
+            <div class="form-group">
+              <label>Number of Jobs</label>
+              <input type="number" id="results" min="10" max="100" value="40" placeholder="10-100" />
+            </div>
+            
+            <div class="form-group">
+              <label>Time Filter</label>
+              <select id="timePosted">
+                <option value="past24h">Past 24 hours</option>
+                <option value="pastWeek">Past week</option>
+                <option value="any">Any time</option>
+              </select>
+            </div>
+            
+            <div class="form-group full-width">
+              <label>GitHub Token</label>
+              <div class="token-input-group">
+                <input type="password" id="github-token" placeholder="ghp_xxxxxxxxxxxx" />
+                <button class="token-toggle" onclick="toggleTokenVisibility()" title="Show/Hide">👁️</button>
+              </div>
+              <p class="help-text">
+                Your token is stored locally in your browser. 
+                <a href="https://github.com/settings/tokens/new?description=LinkedIn%20Scraper&scopes=repo,workflow" target="_blank">Get a token</a>
+              </p>
+            </div>
+          </div>
+          
+          <button class="btn btn-primary" id="run-btn" onclick="triggerScrape()" style="margin-top: 24px;">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <polygon points="5 3 19 12 5 21 5 3"></polygon>
+            </svg>
+            Run Scraper Now
+          </button>
+          
+          <div class="status-banner" id="status-banner">
+            <span id="status-icon">✓</span>
+            <span id="status-text"></span>
+          </div>
+        </div>
+
+        <div class="files-section">
+          <div class="section-header">
+            <div>
+              <h2 class="section-title">Recent Exports</h2>
+              <p class="section-subtitle" id="files-subtitle">Loading...</p>
+            </div>
+          </div>
+          <div class="files-list" id="files-list">
+            <div class="empty-state">Loading CSV files...</div>
+          </div>
+        </div>
+      </main>
+    </div>
+
+    <script>
+      // GitHub repository info
+      const GITHUB_USER = 'CodewithJha';
+      const GITHUB_REPO = 'linkedin-scrapper';
+      const BRANCH = 'main';
+      const WORKFLOW_FILE = 'scrape.yml';
+
+      // Load saved token
+      const savedToken = localStorage.getItem('github_token');
+      if (savedToken) {
+        document.getElementById('github-token').value = savedToken;
+        document.getElementById('setup-notice').style.display = 'none';
+      }
+
+      function toggleTokenVisibility() {
+        const input = document.getElementById('github-token');
+        input.type = input.type === 'password' ? 'text' : 'password';
+      }
+
+      function showStatus(message, type = 'info') {
+        const banner = document.getElementById('status-banner');
+        const icon = document.getElementById('status-icon');
+        const text = document.getElementById('status-text');
+        
+        banner.className = `status-banner show ${type}`;
+        icon.textContent = type === 'success' ? '✓' : type === 'error' ? '✗' : 'ℹ';
+        text.textContent = message;
+      }
+
+      async function triggerScrape() {
+        const btn = document.getElementById('run-btn');
+        const token = document.getElementById('github-token').value.trim();
+        const keywords = document.getElementById('keywords').value.trim();
+        const location = document.getElementById('location').value.trim();
+        const results = document.getElementById('results').value.trim();
+        const timePosted = document.getElementById('timePosted').value;
+
+        if (!token) {
+          showStatus('Please enter your GitHub token first', 'error');
+          return;
+        }
+
+        // Save token for future use
+        localStorage.setItem('github_token', token);
+        document.getElementById('setup-notice').style.display = 'none';
+
+        btn.disabled = true;
+        btn.innerHTML = '<span class="spinner"></span> Triggering...';
+
+        try {
+          const response = await fetch(
+            `https://api.github.com/repos/${GITHUB_USER}/${GITHUB_REPO}/actions/workflows/${WORKFLOW_FILE}/dispatches`,
+            {
+              method: 'POST',
+              headers: {
+                'Accept': 'application/vnd.github.v3+json',
+                'Authorization': `token ${token}`,
+                'Content-Type': 'application/json'
+              },
+              body: JSON.stringify({
+                ref: BRANCH,
+                inputs: {
+                  keywords: keywords || 'data engineer',
+                  location: location || 'India',
+                  results: results || '40',
+                  timePosted: timePosted || 'past24h'
+                }
+              })
+            }
+          );
+
+          if (response.status === 204) {
+            showStatus('Scraper triggered successfully! Check back in 3-5 minutes for new results.', 'success');
+          } else if (response.status === 401) {
+            showStatus('Invalid GitHub token. Please check and try again.', 'error');
+          } else if (response.status === 404) {
+            showStatus('Workflow not found. Make sure the repository has the scrape.yml workflow.', 'error');
+          } else {
+            const data = await response.json().catch(() => ({}));
+            showStatus(data.message || `Error: ${response.status}`, 'error');
+          }
+        } catch (err) {
+          showStatus('Failed to trigger scraper: ' + err.message, 'error');
+        } finally {
+          btn.disabled = false;
+          btn.innerHTML = `
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <polygon points="5 3 19 12 5 21 5 3"></polygon>
+            </svg>
+            Run Scraper Now
+          `;
+        }
+      }
+
+      async function downloadCSV(url, filename) {
+        try {
+          const response = await fetch(url);
+          const text = await response.text();
+          const BOM = '\uFEFF';
+          const blob = new Blob([BOM + text], { type: 'text/csv;charset=utf-8;' });
+          const link = document.createElement('a');
+          link.href = URL.createObjectURL(blob);
+          link.download = filename;
+          document.body.appendChild(link);
+          link.click();
+          document.body.removeChild(link);
+          URL.revokeObjectURL(link.href);
+        } catch (err) {
+          window.open(url, '_blank');
+        }
+      }
+
+      async function fetchFiles() {
+        const filesListEl = document.getElementById('files-list');
+        const filesSubtitleEl = document.getElementById('files-subtitle');
+
+        try {
+          const apiUrl = `https://api.github.com/repos/${GITHUB_USER}/${GITHUB_REPO}/contents/out?ref=${BRANCH}`;
+          const response = await fetch(apiUrl);
+          
+          if (!response.ok) throw new Error('Failed to fetch');
+
+          const files = await response.json();
+          const csvFiles = files
+            .filter(f => f.name.endsWith('.csv'))
+            .sort((a, b) => b.name.localeCompare(a.name))
+            .slice(0, 15);
+
+          if (csvFiles.length === 0) {
+            filesListEl.innerHTML = '<div class="empty-state">No CSV files yet. Run the scraper to generate them!</div>';
+            filesSubtitleEl.textContent = 'No files';
+            return;
+          }
+
+          filesSubtitleEl.textContent = `${csvFiles.length} files available`;
+
+          filesListEl.innerHTML = csvFiles.map(f => {
+            const dateMatch = f.name.match(/(\d{4})-(\d{2})-(\d{2})T(\d{2})-(\d{2})/);
+            let dateStr = 'Unknown date';
+            if (dateMatch) {
+              const [, year, month, day, hour, min] = dateMatch;
+              const date = new Date(`${year}-${month}-${day}T${hour}:${min}:00`);
+              dateStr = date.toLocaleDateString('en-US', {
+                month: 'short', day: 'numeric', year: 'numeric',
+                hour: '2-digit', minute: '2-digit'
+              });
+            }
+
+            const downloadUrl = `https://raw.githubusercontent.com/${GITHUB_USER}/${GITHUB_REPO}/${BRANCH}/out/${f.name}`;
+
+            return `
+              <div class="file-item">
+                <div class="file-info">
+                  <div class="file-icon">📄</div>
+                  <div class="file-details">
+                    <span class="file-name">${f.name}</span>
+                    <span class="file-meta">${dateStr}</span>
+                  </div>
+                </div>
+                <button class="file-download" onclick="downloadCSV('${downloadUrl}', '${f.name}')">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                    <polyline points="7 10 12 15 17 10"></polyline>
+                    <line x1="12" y1="15" x2="12" y2="3"></line>
+                  </svg>
+                  Download
+                </button>
+              </div>
+            `;
+          }).join('');
+
+        } catch (err) {
+          filesListEl.innerHTML = '<div class="empty-state">Could not load files</div>';
+          filesSubtitleEl.textContent = 'Error';
+        }
+      }
+
+      fetchFiles();
+      setInterval(fetchFiles, 60000); // Refresh every minute
+    </script>
+  </body>
+</html>
