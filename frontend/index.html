@@ -615,6 +615,7 @@
       </main>
 
       <footer class="footer">
+        <a href="#" onclick="showTokenSection(); return false;">Change Token</a> · 
         <a href="https://github.com/CodewithJha/linkedin-scrapper" target="_blank">View on GitHub</a>
       </footer>
     </div>
@@ -634,6 +635,11 @@
       function toggleToken() {
         const input = document.getElementById('github-token');
         input.type = input.type === 'password' ? 'text' : 'password';
+      }
+
+      function showTokenSection() {
+        document.getElementById('token-section').style.display = 'block';
+        document.getElementById('github-token').focus();
       }
 
       function showStatus(msg, type) {
