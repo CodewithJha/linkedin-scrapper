@@ -441,10 +441,10 @@
       </header>
 
       <main>
-        <div class="setup-notice" id="setup-notice">
+        <div class="setup-notice" id="setup-notice" style="display: none;">
           ⚠️ <strong>First time setup:</strong> You need a GitHub Personal Access Token to trigger scrapes. 
           <a href="https://github.com/settings/tokens/new?description=LinkedIn%20Scraper&scopes=repo,workflow" target="_blank">Create one here</a> 
-          (select <code>repo</code> and <code>workflow</code> scopes), then paste it below. It's stored only in your browser.
+          (select <code>repo</code> and <code>workflow</code> scopes), then paste it below.
         </div>
 
         <div class="card">
@@ -478,15 +478,15 @@
               </select>
             </div>
             
-            <div class="form-group full-width">
-              <label>GitHub Token</label>
+            <div class="form-group full-width" id="token-group" style="display: none;">
+              <label>GitHub Token <span style="font-weight: normal; color: var(--text-muted);">(saved in browser)</span></label>
               <div class="token-input-group">
                 <input type="password" id="github-token" placeholder="ghp_xxxxxxxxxxxx" />
                 <button class="token-toggle" onclick="toggleTokenVisibility()" title="Show/Hide">👁️</button>
               </div>
               <p class="help-text">
-                Your token is stored locally in your browser. 
-                <a href="https://github.com/settings/tokens/new?description=LinkedIn%20Scraper&scopes=repo,workflow" target="_blank">Get a token</a>
+                <a href="#" onclick="showTokenInput(); return false;">Change token</a> · 
+                <a href="https://github.com/settings/tokens/new?description=LinkedIn%20Scraper&scopes=repo,workflow" target="_blank">Get new token</a>
               </p>
             </div>
           </div>
@@ -530,6 +530,16 @@
       if (savedToken) {
         document.getElementById('github-token').value = savedToken;
         document.getElementById('setup-notice').style.display = 'none';
+        document.getElementById('token-group').style.display = 'none';
+      } else {
+        // First time - show token input
+        document.getElementById('setup-notice').style.display = 'block';
+        document.getElementById('token-group').style.display = 'block';
+      }
+
+      function showTokenInput() {
+        document.getElementById('token-group').style.display = 'block';
+        document.getElementById('github-token').focus();
       }
 
       function toggleTokenVisibility() {
