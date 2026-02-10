@@ -6,25 +6,24 @@
     <title>LinkedIn Jobs Scraper</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
     <style>
       :root {
-        --bg-primary: #0a0c10;
-        --bg-secondary: #12151c;
-        --bg-card: rgba(18, 21, 28, 0.9);
-        --bg-card-hover: rgba(26, 31, 42, 0.95);
-        --border: rgba(255, 255, 255, 0.08);
-        --border-light: rgba(255, 255, 255, 0.12);
-        --text-primary: #f1f5f9;
-        --text-secondary: #94a3b8;
-        --text-muted: #64748b;
-        --accent: #22d3ee;
-        --accent-hover: #67e8f9;
-        --accent-glow: rgba(34, 211, 238, 0.15);
-        --success: #4ade80;
-        --success-glow: rgba(74, 222, 128, 0.2);
-        --warning: #fbbf24;
-        --warning-glow: rgba(251, 191, 36, 0.2);
+        --bg-dark: #050505;
+        --bg-card: #0c0c0c;
+        --bg-card-hover: #111111;
+        --bg-input: #0a0a0a;
+        --border: #1a1a1a;
+        --border-hover: #2a2a2a;
+        --text: #ffffff;
+        --text-dim: #888888;
+        --text-muted: #555555;
+        --accent-1: #ff6b35;
+        --accent-2: #f7931a;
+        --accent-gradient: linear-gradient(135deg, #ff6b35 0%, #f7931a 50%, #ffbe0b 100%);
+        --glow-orange: rgba(255, 107, 53, 0.4);
+        --success: #00ff88;
+        --error: #ff4757;
       }
 
       * {
@@ -33,121 +32,174 @@
         box-sizing: border-box;
       }
 
-      body {
-        font-family: 'DM Sans', -apple-system, BlinkMacSystemFont, sans-serif;
-        background: var(--bg-primary);
-        color: var(--text-primary);
-        min-height: 100vh;
-        line-height: 1.6;
+      html {
+        scroll-behavior: smooth;
       }
 
-      body::before {
-        content: '';
+      body {
+        font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+        background: var(--bg-dark);
+        color: var(--text);
+        min-height: 100vh;
+        line-height: 1.6;
+        overflow-x: hidden;
+      }
+
+      /* Animated gradient background */
+      .bg-gradient {
         position: fixed;
         top: 0;
         left: 0;
         right: 0;
         bottom: 0;
         background: 
-          radial-gradient(ellipse at 20% 20%, rgba(34, 211, 238, 0.05) 0%, transparent 50%),
-          radial-gradient(ellipse at 80% 80%, rgba(139, 92, 246, 0.05) 0%, transparent 50%);
+          radial-gradient(ellipse 80% 50% at 20% -20%, rgba(255, 107, 53, 0.15) 0%, transparent 50%),
+          radial-gradient(ellipse 60% 40% at 80% 100%, rgba(247, 147, 26, 0.1) 0%, transparent 50%),
+          radial-gradient(ellipse 40% 60% at 50% 50%, rgba(255, 190, 11, 0.05) 0%, transparent 70%);
         pointer-events: none;
         z-index: 0;
       }
 
-      .container {
-        max-width: 900px;
-        margin: 0 auto;
-        padding: 0 24px;
-        position: relative;
+      /* Noise texture overlay */
+      .noise {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+        opacity: 0.03;
+        pointer-events: none;
         z-index: 1;
       }
 
+      .container {
+        max-width: 720px;
+        margin: 0 auto;
+        padding: 0 20px;
+        position: relative;
+        z-index: 2;
+      }
+
+      /* Header */
       header {
-        padding: 40px 0 32px;
+        padding: 60px 0 40px;
         text-align: center;
       }
 
       .logo {
         display: inline-flex;
         align-items: center;
-        gap: 14px;
-        margin-bottom: 12px;
+        gap: 16px;
+        margin-bottom: 16px;
       }
 
       .logo-icon {
-        width: 52px;
-        height: 52px;
-        background: linear-gradient(135deg, var(--accent), #8b5cf6);
-        border-radius: 14px;
+        width: 56px;
+        height: 56px;
+        background: var(--accent-gradient);
+        border-radius: 16px;
         display: flex;
         align-items: center;
         justify-content: center;
-        font-size: 24px;
-        box-shadow: 0 8px 32px var(--accent-glow);
+        font-size: 28px;
+        box-shadow: 
+          0 0 40px var(--glow-orange),
+          0 0 80px rgba(255, 107, 53, 0.2);
+        animation: glow-pulse 3s ease-in-out infinite;
       }
 
-      .logo-text h1 {
-        font-family: 'Outfit', sans-serif;
-        font-size: 28px;
+      @keyframes glow-pulse {
+        0%, 100% { box-shadow: 0 0 40px var(--glow-orange), 0 0 80px rgba(255, 107, 53, 0.2); }
+        50% { box-shadow: 0 0 60px var(--glow-orange), 0 0 120px rgba(255, 107, 53, 0.3); }
+      }
+
+      h1 {
+        font-family: 'Space Grotesk', sans-serif;
+        font-size: 32px;
         font-weight: 700;
-        letter-spacing: -0.5px;
-        background: linear-gradient(135deg, var(--text-primary), var(--accent));
+        letter-spacing: -1px;
+        background: var(--accent-gradient);
         -webkit-background-clip: text;
         -webkit-text-fill-color: transparent;
         background-clip: text;
       }
 
-      .subtitle {
-        color: var(--text-muted);
+      .tagline {
+        color: var(--text-dim);
         font-size: 15px;
         margin-top: 8px;
+        font-weight: 400;
       }
 
+      /* Main */
       main {
-        padding: 20px 0 60px;
+        padding-bottom: 80px;
       }
 
+      /* Cards */
       .card {
         background: var(--bg-card);
         border: 1px solid var(--border);
-        border-radius: 20px;
+        border-radius: 24px;
         padding: 32px;
-        backdrop-filter: blur(20px);
         margin-bottom: 24px;
+        position: relative;
+        overflow: hidden;
+        transition: all 0.3s ease;
       }
 
-      .card-title {
-        font-family: 'Outfit', sans-serif;
-        font-size: 18px;
-        font-weight: 600;
-        margin-bottom: 24px;
+      .card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 1px;
+        background: linear-gradient(90deg, transparent, rgba(255,107,53,0.3), transparent);
+        opacity: 0;
+        transition: opacity 0.3s ease;
+      }
+
+      .card:hover::before {
+        opacity: 1;
+      }
+
+      .card-header {
         display: flex;
         align-items: center;
-        gap: 10px;
+        gap: 12px;
+        margin-bottom: 28px;
       }
 
-      .card-title-icon {
-        width: 32px;
-        height: 32px;
-        background: var(--accent-glow);
-        border-radius: 8px;
+      .card-icon {
+        width: 40px;
+        height: 40px;
+        background: rgba(255, 107, 53, 0.1);
+        border: 1px solid rgba(255, 107, 53, 0.2);
+        border-radius: 12px;
         display: flex;
         align-items: center;
         justify-content: center;
-        font-size: 16px;
+        font-size: 18px;
       }
 
+      .card-title {
+        font-family: 'Space Grotesk', sans-serif;
+        font-size: 18px;
+        font-weight: 600;
+        letter-spacing: -0.3px;
+      }
+
+      /* Form */
       .form-grid {
         display: grid;
         grid-template-columns: 1fr 1fr;
-        gap: 20px;
+        gap: 16px;
       }
 
-      @media (max-width: 600px) {
-        .form-grid {
-          grid-template-columns: 1fr;
-        }
+      @media (max-width: 560px) {
+        .form-grid { grid-template-columns: 1fr; }
       }
 
       .form-group {
@@ -161,23 +213,24 @@
       }
 
       label {
-        font-size: 13px;
-        font-weight: 500;
-        color: var(--text-secondary);
+        font-size: 12px;
+        font-weight: 600;
+        color: var(--text-dim);
         text-transform: uppercase;
-        letter-spacing: 0.5px;
+        letter-spacing: 0.8px;
       }
 
       input, select {
         width: 100%;
-        padding: 14px 18px;
-        background: var(--bg-primary);
+        padding: 16px 20px;
+        background: var(--bg-input);
         border: 1px solid var(--border);
-        border-radius: 12px;
-        color: var(--text-primary);
-        font-family: 'DM Sans', sans-serif;
+        border-radius: 14px;
+        color: var(--text);
+        font-family: 'Inter', sans-serif;
         font-size: 15px;
         transition: all 0.2s ease;
+        -webkit-appearance: none;
       }
 
       input::placeholder {
@@ -186,41 +239,67 @@
 
       input:focus, select:focus {
         outline: none;
-        border-color: var(--accent);
-        box-shadow: 0 0 0 3px var(--accent-glow);
+        border-color: var(--accent-1);
+        box-shadow: 0 0 0 4px rgba(255, 107, 53, 0.1);
       }
 
+      select {
+        cursor: pointer;
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%23888' stroke-width='2'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+        background-repeat: no-repeat;
+        background-position: right 16px center;
+        background-size: 16px;
+        padding-right: 48px;
+      }
+
+      select option {
+        background: var(--bg-card);
+        color: var(--text);
+      }
+
+      /* Button */
       .btn {
         display: inline-flex;
         align-items: center;
         justify-content: center;
-        gap: 10px;
-        padding: 16px 32px;
+        gap: 12px;
+        padding: 18px 32px;
         border: none;
-        border-radius: 12px;
-        font-family: 'Outfit', sans-serif;
+        border-radius: 14px;
+        font-family: 'Space Grotesk', sans-serif;
         font-size: 16px;
         font-weight: 600;
         cursor: pointer;
-        transition: all 0.2s ease;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         width: 100%;
+        margin-top: 24px;
+        position: relative;
+        overflow: hidden;
       }
 
       .btn-primary {
-        background: linear-gradient(135deg, var(--accent), #8b5cf6);
-        color: #0a0c10;
-        box-shadow: 0 4px 24px var(--accent-glow);
+        background: var(--accent-gradient);
+        color: #000;
+        box-shadow: 
+          0 4px 24px rgba(255, 107, 53, 0.3),
+          inset 0 1px 0 rgba(255,255,255,0.2);
       }
 
       .btn-primary:hover:not(:disabled) {
         transform: translateY(-2px);
-        box-shadow: 0 8px 32px var(--accent-glow);
+        box-shadow: 
+          0 8px 40px rgba(255, 107, 53, 0.4),
+          inset 0 1px 0 rgba(255,255,255,0.2);
+      }
+
+      .btn-primary:active:not(:disabled) {
+        transform: translateY(0);
       }
 
       .btn:disabled {
-        opacity: 0.6;
+        opacity: 0.5;
         cursor: not-allowed;
-        transform: none;
+        transform: none !important;
       }
 
       .btn svg {
@@ -234,63 +313,110 @@
         border: 2px solid transparent;
         border-top-color: currentColor;
         border-radius: 50%;
-        animation: spin 0.8s linear infinite;
+        animation: spin 0.7s linear infinite;
       }
 
       @keyframes spin {
         to { transform: rotate(360deg); }
       }
 
-      .status-banner {
+      /* Status */
+      .status {
+        margin-top: 20px;
         padding: 16px 20px;
         border-radius: 12px;
         font-size: 14px;
-        margin-top: 20px;
         display: none;
-      }
-
-      .status-banner.show {
-        display: flex;
         align-items: center;
         gap: 12px;
+        animation: slideIn 0.3s ease;
       }
 
-      .status-banner.success {
-        background: rgba(74, 222, 128, 0.1);
-        border: 1px solid rgba(74, 222, 128, 0.3);
+      @keyframes slideIn {
+        from { opacity: 0; transform: translateY(-8px); }
+        to { opacity: 1; transform: translateY(0); }
+      }
+
+      .status.show { display: flex; }
+      .status.success {
+        background: rgba(0, 255, 136, 0.08);
+        border: 1px solid rgba(0, 255, 136, 0.2);
         color: var(--success);
       }
-
-      .status-banner.error {
-        background: rgba(239, 68, 68, 0.1);
-        border: 1px solid rgba(239, 68, 68, 0.3);
-        color: #ef4444;
+      .status.error {
+        background: rgba(255, 71, 87, 0.08);
+        border: 1px solid rgba(255, 71, 87, 0.2);
+        color: var(--error);
+      }
+      .status.info {
+        background: rgba(255, 107, 53, 0.08);
+        border: 1px solid rgba(255, 107, 53, 0.2);
+        color: var(--accent-1);
       }
 
-      .status-banner.info {
-        background: rgba(34, 211, 238, 0.1);
-        border: 1px solid rgba(34, 211, 238, 0.3);
-        color: var(--accent);
+      /* Token section */
+      .token-section {
+        margin-top: 20px;
+        padding-top: 20px;
+        border-top: 1px solid var(--border);
       }
 
-      .files-section {
-        margin-top: 32px;
-      }
-
-      .section-header {
+      .token-header {
         display: flex;
         align-items: center;
         justify-content: space-between;
-        margin-bottom: 16px;
+        margin-bottom: 12px;
       }
 
-      .section-title {
-        font-family: 'Outfit', sans-serif;
-        font-size: 18px;
+      .token-link {
+        font-size: 12px;
+        color: var(--accent-1);
+        text-decoration: none;
+        transition: color 0.2s;
+      }
+
+      .token-link:hover {
+        color: var(--accent-2);
+        text-decoration: underline;
+      }
+
+      .token-input-wrap {
+        position: relative;
+      }
+
+      .token-toggle {
+        position: absolute;
+        right: 16px;
+        top: 50%;
+        transform: translateY(-50%);
+        background: none;
+        border: none;
+        color: var(--text-muted);
+        cursor: pointer;
+        padding: 4px;
+        font-size: 16px;
+        transition: color 0.2s;
+      }
+
+      .token-toggle:hover {
+        color: var(--text-dim);
+      }
+
+      /* Files */
+      .files-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 20px;
+      }
+
+      .files-title {
+        font-family: 'Space Grotesk', sans-serif;
+        font-size: 20px;
         font-weight: 600;
       }
 
-      .section-subtitle {
+      .files-count {
         font-size: 13px;
         color: var(--text-muted);
       }
@@ -298,7 +424,7 @@
       .files-list {
         display: flex;
         flex-direction: column;
-        gap: 10px;
+        gap: 8px;
       }
 
       .file-item {
@@ -308,278 +434,241 @@
         padding: 16px 20px;
         background: var(--bg-card);
         border: 1px solid var(--border);
-        border-radius: 14px;
+        border-radius: 16px;
         transition: all 0.2s ease;
       }
 
       .file-item:hover {
-        border-color: var(--border-light);
+        border-color: var(--border-hover);
         background: var(--bg-card-hover);
+        transform: translateX(4px);
       }
 
       .file-info {
         display: flex;
         align-items: center;
         gap: 14px;
+        overflow: hidden;
       }
 
       .file-icon {
-        width: 42px;
-        height: 42px;
-        background: var(--accent-glow);
-        border-radius: 10px;
+        width: 44px;
+        height: 44px;
+        background: rgba(255, 107, 53, 0.08);
+        border: 1px solid rgba(255, 107, 53, 0.15);
+        border-radius: 12px;
         display: flex;
         align-items: center;
         justify-content: center;
-        color: var(--accent);
-        font-size: 18px;
+        font-size: 20px;
+        flex-shrink: 0;
       }
 
       .file-details {
-        display: flex;
-        flex-direction: column;
-        gap: 2px;
+        overflow: hidden;
       }
 
       .file-name {
-        font-weight: 600;
+        font-weight: 500;
         font-size: 14px;
-        color: var(--text-primary);
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
       }
 
-      .file-meta {
+      .file-date {
         font-size: 12px;
         color: var(--text-muted);
+        margin-top: 2px;
       }
 
-      .file-download {
+      .file-btn {
         display: flex;
         align-items: center;
-        gap: 6px;
+        gap: 8px;
         padding: 10px 18px;
         background: transparent;
         border: 1px solid var(--border);
         border-radius: 10px;
-        color: var(--text-secondary);
+        color: var(--text-dim);
         font-size: 13px;
         font-weight: 500;
         cursor: pointer;
         transition: all 0.2s ease;
+        flex-shrink: 0;
       }
 
-      .file-download:hover {
-        border-color: var(--accent);
-        color: var(--accent);
-        background: var(--accent-glow);
+      .file-btn:hover {
+        border-color: var(--accent-1);
+        color: var(--accent-1);
+        background: rgba(255, 107, 53, 0.05);
       }
 
-      .empty-state {
+      .file-btn svg {
+        width: 16px;
+        height: 16px;
+      }
+
+      .empty {
         text-align: center;
         padding: 48px 24px;
         color: var(--text-muted);
       }
 
-      .setup-notice {
-        background: rgba(251, 191, 36, 0.1);
-        border: 1px solid rgba(251, 191, 36, 0.3);
-        border-radius: 12px;
-        padding: 16px 20px;
-        margin-bottom: 24px;
-        font-size: 14px;
-        color: var(--warning);
-      }
-
-      .setup-notice code {
-        background: rgba(0,0,0,0.3);
-        padding: 2px 6px;
-        border-radius: 4px;
-        font-size: 12px;
-      }
-
-      .token-input-group {
-        position: relative;
-      }
-
-      .token-toggle {
-        position: absolute;
-        right: 12px;
-        top: 50%;
-        transform: translateY(-50%);
-        background: none;
-        border: none;
+      /* Footer */
+      .footer {
+        text-align: center;
+        padding: 40px 0;
         color: var(--text-muted);
-        cursor: pointer;
-        padding: 4px;
+        font-size: 13px;
       }
 
-      .help-text {
-        font-size: 12px;
-        color: var(--text-muted);
-        margin-top: 6px;
-      }
-
-      .help-text a {
-        color: var(--accent);
+      .footer a {
+        color: var(--accent-1);
         text-decoration: none;
       }
 
-      .help-text a:hover {
+      .footer a:hover {
         text-decoration: underline;
       }
     </style>
   </head>
   <body>
+    <div class="bg-gradient"></div>
+    <div class="noise"></div>
+    
     <div class="container">
       <header>
         <div class="logo">
           <div class="logo-icon">⚡</div>
-          <div class="logo-text">
-            <h1>LinkedIn Jobs Scraper</h1>
-          </div>
         </div>
-        <p class="subtitle">Automated job scraping with customizable search parameters</p>
+        <h1>LinkedIn Jobs Scraper</h1>
+        <p class="tagline">Automated job discovery with smart filtering</p>
       </header>
 
       <main>
-        <div class="setup-notice" id="setup-notice" style="display: none;">
-          ⚠️ <strong>First time setup:</strong> You need a GitHub Personal Access Token to trigger scrapes. 
-          <a href="https://github.com/settings/tokens/new?description=LinkedIn%20Scraper&scopes=repo,workflow" target="_blank">Create one here</a> 
-          (select <code>repo</code> and <code>workflow</code> scopes), then paste it below.
-        </div>
-
         <div class="card">
-          <div class="card-title">
-            <span class="card-title-icon">🔧</span>
-            Scraper Settings
+          <div class="card-header">
+            <div class="card-icon">🎯</div>
+            <h2 class="card-title">Search Parameters</h2>
           </div>
           
           <div class="form-grid">
             <div class="form-group">
-              <label>Job Role / Keywords</label>
-              <input type="text" id="keywords" placeholder="e.g., data engineer, python developer" value="data engineer" />
+              <label>Job Role</label>
+              <input type="text" id="keywords" placeholder="data engineer" value="data engineer" />
             </div>
             
             <div class="form-group">
               <label>Location</label>
-              <input type="text" id="location" placeholder="e.g., India, Remote, Bangalore" value="India" />
+              <input type="text" id="location" placeholder="India" value="India" />
             </div>
             
             <div class="form-group">
-              <label>Number of Jobs</label>
-              <input type="number" id="results" min="10" max="100" value="40" placeholder="10-100" />
+              <label>Max Results</label>
+              <input type="number" id="results" min="10" max="100" value="40" />
             </div>
             
             <div class="form-group">
-              <label>Time Filter</label>
+              <label>Posted Within</label>
               <select id="timePosted">
-                <option value="past24h">Past 24 hours</option>
-                <option value="pastWeek">Past week</option>
+                <option value="past24h">Last 24 hours</option>
+                <option value="pastWeek">Last week</option>
                 <option value="any">Any time</option>
               </select>
             </div>
-            
-            <div class="form-group full-width" id="token-group" style="display: none;">
-              <label>GitHub Token <span style="font-weight: normal; color: var(--text-muted);">(saved in browser)</span></label>
-              <div class="token-input-group">
-                <input type="password" id="github-token" placeholder="ghp_xxxxxxxxxxxx" />
-                <button class="token-toggle" onclick="toggleTokenVisibility()" title="Show/Hide">👁️</button>
-              </div>
-              <p class="help-text">
-                <a href="#" onclick="showTokenInput(); return false;">Change token</a> · 
-                <a href="https://github.com/settings/tokens/new?description=LinkedIn%20Scraper&scopes=repo,workflow" target="_blank">Get new token</a>
-              </p>
-            </div>
           </div>
           
-          <button class="btn btn-primary" id="run-btn" onclick="triggerScrape()" style="margin-top: 24px;">
+          <button class="btn btn-primary" id="run-btn" onclick="triggerScrape()">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
               <polygon points="5 3 19 12 5 21 5 3"></polygon>
             </svg>
-            Run Scraper Now
+            Start Scraping
           </button>
           
-          <div class="status-banner" id="status-banner">
-            <span id="status-icon">✓</span>
+          <div class="status" id="status">
+            <span id="status-icon"></span>
             <span id="status-text"></span>
+          </div>
+
+          <div class="token-section" id="token-section">
+            <div class="token-header">
+              <label>GitHub Token</label>
+              <a href="https://github.com/settings/tokens/new?description=LinkedIn%20Scraper&scopes=repo,workflow" target="_blank" class="token-link">Get token →</a>
+            </div>
+            <div class="token-input-wrap">
+              <input type="password" id="github-token" placeholder="ghp_xxxxxxxxxxxx" />
+              <button class="token-toggle" onclick="toggleToken()">👁</button>
+            </div>
           </div>
         </div>
 
-        <div class="files-section">
-          <div class="section-header">
-            <div>
-              <h2 class="section-title">Recent Exports</h2>
-              <p class="section-subtitle" id="files-subtitle">Loading...</p>
-            </div>
+        <div class="card">
+          <div class="files-header">
+            <h2 class="files-title">Recent Exports</h2>
+            <span class="files-count" id="files-count"></span>
           </div>
           <div class="files-list" id="files-list">
-            <div class="empty-state">Loading CSV files...</div>
+            <div class="empty">Loading...</div>
           </div>
         </div>
       </main>
+
+      <footer class="footer">
+        <a href="https://github.com/CodewithJha/linkedin-scrapper" target="_blank">View on GitHub</a>
+      </footer>
     </div>
 
     <script>
-      // GitHub repository info
       const GITHUB_USER = 'CodewithJha';
       const GITHUB_REPO = 'linkedin-scrapper';
       const BRANCH = 'main';
-      const WORKFLOW_FILE = 'scrape.yml';
 
-      // Load saved token
+      // Load token
       const savedToken = localStorage.getItem('github_token');
       if (savedToken) {
         document.getElementById('github-token').value = savedToken;
-        document.getElementById('setup-notice').style.display = 'none';
-        document.getElementById('token-group').style.display = 'none';
-      } else {
-        // First time - show token input
-        document.getElementById('setup-notice').style.display = 'block';
-        document.getElementById('token-group').style.display = 'block';
+        document.getElementById('token-section').style.display = 'none';
       }
 
-      function showTokenInput() {
-        document.getElementById('token-group').style.display = 'block';
-        document.getElementById('github-token').focus();
-      }
-
-      function toggleTokenVisibility() {
+      function toggleToken() {
         const input = document.getElementById('github-token');
         input.type = input.type === 'password' ? 'text' : 'password';
       }
 
-      function showStatus(message, type = 'info') {
-        const banner = document.getElementById('status-banner');
+      function showStatus(msg, type) {
+        const el = document.getElementById('status');
         const icon = document.getElementById('status-icon');
         const text = document.getElementById('status-text');
-        
-        banner.className = `status-banner show ${type}`;
-        icon.textContent = type === 'success' ? '✓' : type === 'error' ? '✗' : 'ℹ';
-        text.textContent = message;
+        el.className = `status show ${type}`;
+        icon.textContent = type === 'success' ? '✓' : type === 'error' ? '✗' : '→';
+        text.textContent = msg;
       }
 
       async function triggerScrape() {
         const btn = document.getElementById('run-btn');
         const token = document.getElementById('github-token').value.trim();
-        const keywords = document.getElementById('keywords').value.trim();
-        const location = document.getElementById('location').value.trim();
-        const results = document.getElementById('results').value.trim();
-        const timePosted = document.getElementById('timePosted').value;
-
+        
         if (!token) {
-          showStatus('Please enter your GitHub token first', 'error');
+          showStatus('Enter your GitHub token first', 'error');
+          document.getElementById('token-section').style.display = 'block';
           return;
         }
 
-        // Save token for future use
         localStorage.setItem('github_token', token);
-        document.getElementById('setup-notice').style.display = 'none';
+        document.getElementById('token-section').style.display = 'none';
+
+        const keywords = document.getElementById('keywords').value.trim() || 'data engineer';
+        const location = document.getElementById('location').value.trim() || 'India';
+        const results = document.getElementById('results').value || '40';
+        const timePosted = document.getElementById('timePosted').value;
 
         btn.disabled = true;
-        btn.innerHTML = '<span class="spinner"></span> Triggering...';
+        btn.innerHTML = '<span class="spinner"></span> Starting...';
 
         try {
-          const response = await fetch(
-            `https://api.github.com/repos/${GITHUB_USER}/${GITHUB_REPO}/actions/workflows/${WORKFLOW_FILE}/dispatches`,
+          const res = await fetch(
+            `https://api.github.com/repos/${GITHUB_USER}/${GITHUB_REPO}/actions/workflows/scrape.yml/dispatches`,
             {
               method: 'POST',
               headers: {
@@ -589,124 +678,103 @@
               },
               body: JSON.stringify({
                 ref: BRANCH,
-                inputs: {
-                  keywords: keywords || 'data engineer',
-                  location: location || 'India',
-                  results: results || '40',
-                  timePosted: timePosted || 'past24h'
-                }
+                inputs: { keywords, location, results, timePosted }
               })
             }
           );
 
-          if (response.status === 204) {
-            showStatus('Scraper triggered successfully! Check back in 3-5 minutes for new results.', 'success');
-          } else if (response.status === 401) {
-            showStatus('Invalid GitHub token. Please check and try again.', 'error');
-          } else if (response.status === 404) {
-            showStatus('Workflow not found. Make sure the repository has the scrape.yml workflow.', 'error');
+          if (res.status === 204) {
+            showStatus('Scraper started! Results in 3-5 minutes.', 'success');
+          } else if (res.status === 401) {
+            showStatus('Invalid token. Check and try again.', 'error');
+            document.getElementById('token-section').style.display = 'block';
           } else {
-            const data = await response.json().catch(() => ({}));
-            showStatus(data.message || `Error: ${response.status}`, 'error');
+            showStatus('Failed to start scraper', 'error');
           }
-        } catch (err) {
-          showStatus('Failed to trigger scraper: ' + err.message, 'error');
+        } catch (e) {
+          showStatus('Network error: ' + e.message, 'error');
         } finally {
           btn.disabled = false;
           btn.innerHTML = `
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
               <polygon points="5 3 19 12 5 21 5 3"></polygon>
             </svg>
-            Run Scraper Now
+            Start Scraping
           `;
         }
       }
 
-      async function downloadCSV(url, filename) {
+      async function downloadCSV(url, name) {
         try {
-          const response = await fetch(url);
-          const text = await response.text();
-          const BOM = '\uFEFF';
-          const blob = new Blob([BOM + text], { type: 'text/csv;charset=utf-8;' });
+          const res = await fetch(url);
+          const text = await res.text();
+          const blob = new Blob(['\uFEFF' + text], { type: 'text/csv;charset=utf-8;' });
           const link = document.createElement('a');
           link.href = URL.createObjectURL(blob);
-          link.download = filename;
-          document.body.appendChild(link);
+          link.download = name;
           link.click();
-          document.body.removeChild(link);
           URL.revokeObjectURL(link.href);
-        } catch (err) {
+        } catch {
           window.open(url, '_blank');
         }
       }
 
-      async function fetchFiles() {
-        const filesListEl = document.getElementById('files-list');
-        const filesSubtitleEl = document.getElementById('files-subtitle');
+      async function loadFiles() {
+        const list = document.getElementById('files-list');
+        const count = document.getElementById('files-count');
 
         try {
-          const apiUrl = `https://api.github.com/repos/${GITHUB_USER}/${GITHUB_REPO}/contents/out?ref=${BRANCH}`;
-          const response = await fetch(apiUrl);
+          const res = await fetch(`https://api.github.com/repos/${GITHUB_USER}/${GITHUB_REPO}/contents/out?ref=${BRANCH}`);
+          if (!res.ok) throw new Error();
           
-          if (!response.ok) throw new Error('Failed to fetch');
-
-          const files = await response.json();
-          const csvFiles = files
+          const files = (await res.json())
             .filter(f => f.name.endsWith('.csv'))
             .sort((a, b) => b.name.localeCompare(a.name))
-            .slice(0, 15);
+            .slice(0, 12);
 
-          if (csvFiles.length === 0) {
-            filesListEl.innerHTML = '<div class="empty-state">No CSV files yet. Run the scraper to generate them!</div>';
-            filesSubtitleEl.textContent = 'No files';
+          if (!files.length) {
+            list.innerHTML = '<div class="empty">No exports yet. Run the scraper!</div>';
+            count.textContent = '';
             return;
           }
 
-          filesSubtitleEl.textContent = `${csvFiles.length} files available`;
+          count.textContent = `${files.length} files`;
 
-          filesListEl.innerHTML = csvFiles.map(f => {
-            const dateMatch = f.name.match(/(\d{4})-(\d{2})-(\d{2})T(\d{2})-(\d{2})/);
-            let dateStr = 'Unknown date';
-            if (dateMatch) {
-              const [, year, month, day, hour, min] = dateMatch;
-              const date = new Date(`${year}-${month}-${day}T${hour}:${min}:00`);
-              dateStr = date.toLocaleDateString('en-US', {
-                month: 'short', day: 'numeric', year: 'numeric',
-                hour: '2-digit', minute: '2-digit'
-              });
+          list.innerHTML = files.map(f => {
+            const m = f.name.match(/(\d{4})-(\d{2})-(\d{2})T(\d{2})-(\d{2})/);
+            let date = 'Unknown';
+            if (m) {
+              const d = new Date(`${m[1]}-${m[2]}-${m[3]}T${m[4]}:${m[5]}:00`);
+              date = d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' });
             }
-
-            const downloadUrl = `https://raw.githubusercontent.com/${GITHUB_USER}/${GITHUB_REPO}/${BRANCH}/out/${f.name}`;
-
+            const url = `https://raw.githubusercontent.com/${GITHUB_USER}/${GITHUB_REPO}/${BRANCH}/out/${f.name}`;
             return `
               <div class="file-item">
                 <div class="file-info">
                   <div class="file-icon">📄</div>
                   <div class="file-details">
-                    <span class="file-name">${f.name}</span>
-                    <span class="file-meta">${dateStr}</span>
+                    <div class="file-name">${f.name}</div>
+                    <div class="file-date">${date}</div>
                   </div>
                 </div>
-                <button class="file-download" onclick="downloadCSV('${downloadUrl}', '${f.name}')">
-                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
-                    <polyline points="7 10 12 15 17 10"></polyline>
-                    <line x1="12" y1="15" x2="12" y2="3"></line>
+                <button class="file-btn" onclick="downloadCSV('${url}','${f.name}')">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                    <polyline points="7 10 12 15 17 10"/>
+                    <line x1="12" y1="15" x2="12" y2="3"/>
                   </svg>
                   Download
                 </button>
               </div>
             `;
           }).join('');
-
-        } catch (err) {
-          filesListEl.innerHTML = '<div class="empty-state">Could not load files</div>';
-          filesSubtitleEl.textContent = 'Error';
+        } catch {
+          list.innerHTML = '<div class="empty">Failed to load files</div>';
         }
       }
 
-      fetchFiles();
-      setInterval(fetchFiles, 60000); // Refresh every minute
+      loadFiles();
+      setInterval(loadFiles, 60000);
     </script>
   </body>
 </html>
