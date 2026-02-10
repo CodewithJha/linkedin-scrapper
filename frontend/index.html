@@ -45,7 +45,6 @@
         overflow-x: hidden;
       }
 
-      /* Animated gradient background */
       .bg-gradient {
         position: fixed;
         top: 0;
@@ -60,7 +59,6 @@
         z-index: 0;
       }
 
-      /* Noise texture overlay */
       .noise {
         position: fixed;
         top: 0;
@@ -81,7 +79,6 @@
         z-index: 2;
       }
 
-      /* Header */
       header {
         padding: 60px 0 40px;
         text-align: center;
@@ -132,12 +129,10 @@
         font-weight: 400;
       }
 
-      /* Main */
       main {
         padding-bottom: 80px;
       }
 
-      /* Cards */
       .card {
         background: var(--bg-card);
         border: 1px solid var(--border);
@@ -191,7 +186,6 @@
         letter-spacing: -0.3px;
       }
 
-      /* Form */
       .form-grid {
         display: grid;
         grid-template-columns: 1fr 1fr;
@@ -257,7 +251,6 @@
         color: var(--text);
       }
 
-      /* Button */
       .btn {
         display: inline-flex;
         align-items: center;
@@ -320,7 +313,6 @@
         to { transform: rotate(360deg); }
       }
 
-      /* Status */
       .status {
         margin-top: 20px;
         padding: 16px 20px;
@@ -354,55 +346,6 @@
         color: var(--accent-1);
       }
 
-      /* Token section */
-      .token-section {
-        margin-top: 20px;
-        padding-top: 20px;
-        border-top: 1px solid var(--border);
-      }
-
-      .token-header {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        margin-bottom: 12px;
-      }
-
-      .token-link {
-        font-size: 12px;
-        color: var(--accent-1);
-        text-decoration: none;
-        transition: color 0.2s;
-      }
-
-      .token-link:hover {
-        color: var(--accent-2);
-        text-decoration: underline;
-      }
-
-      .token-input-wrap {
-        position: relative;
-      }
-
-      .token-toggle {
-        position: absolute;
-        right: 16px;
-        top: 50%;
-        transform: translateY(-50%);
-        background: none;
-        border: none;
-        color: var(--text-muted);
-        cursor: pointer;
-        padding: 4px;
-        font-size: 16px;
-        transition: color 0.2s;
-      }
-
-      .token-toggle:hover {
-        color: var(--text-dim);
-      }
-
-      /* Files */
       .files-header {
         display: flex;
         align-items: center;
@@ -515,7 +458,6 @@
         color: var(--text-muted);
       }
 
-      /* Footer */
       .footer {
         text-align: center;
         padding: 40px 0;
@@ -531,6 +473,32 @@
       .footer a:hover {
         text-decoration: underline;
       }
+
+      .badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        padding: 6px 12px;
+        background: rgba(0, 255, 136, 0.1);
+        border: 1px solid rgba(0, 255, 136, 0.2);
+        border-radius: 20px;
+        font-size: 12px;
+        color: var(--success);
+        margin-top: 12px;
+      }
+
+      .badge-dot {
+        width: 6px;
+        height: 6px;
+        background: var(--success);
+        border-radius: 50%;
+        animation: pulse 2s ease-in-out infinite;
+      }
+
+      @keyframes pulse {
+        0%, 100% { opacity: 1; }
+        50% { opacity: 0.5; }
+      }
     </style>
   </head>
   <body>
@@ -544,6 +512,10 @@
         </div>
         <h1>LinkedIn Jobs Scraper</h1>
         <p class="tagline">Automated job discovery with smart filtering</p>
+        <div class="badge">
+          <span class="badge-dot"></span>
+          Ready to scrape
+        </div>
       </header>
 
       <main>
@@ -590,17 +562,6 @@
             <span id="status-icon"></span>
             <span id="status-text"></span>
           </div>
-
-          <div class="token-section" id="token-section">
-            <div class="token-header">
-              <label>GitHub Token</label>
-              <a href="https://github.com/settings/tokens/new?description=LinkedIn%20Scraper&scopes=repo,workflow" target="_blank" class="token-link">Get token →</a>
-            </div>
-            <div class="token-input-wrap">
-              <input type="password" id="github-token" placeholder="ghp_xxxxxxxxxxxx" />
-              <button class="token-toggle" onclick="toggleToken()">👁</button>
-            </div>
-          </div>
         </div>
 
         <div class="card">
@@ -615,7 +576,6 @@
       </main>
 
       <footer class="footer">
-        <a href="#" onclick="showTokenSection(); return false;">Change Token</a> · 
         <a href="https://github.com/CodewithJha/linkedin-scrapper" target="_blank">View on GitHub</a>
       </footer>
     </div>
@@ -624,23 +584,6 @@
       const GITHUB_USER = 'CodewithJha';
       const GITHUB_REPO = 'linkedin-scrapper';
       const BRANCH = 'main';
-
-      // Load token
-      const savedToken = localStorage.getItem('github_token');
-      if (savedToken) {
-        document.getElementById('github-token').value = savedToken;
-        document.getElementById('token-section').style.display = 'none';
-      }
-
-      function toggleToken() {
-        const input = document.getElementById('github-token');
-        input.type = input.type === 'password' ? 'text' : 'password';
-      }
-
-      function showTokenSection() {
-        document.getElementById('token-section').style.display = 'block';
-        document.getElementById('github-token').focus();
-      }
 
       function showStatus(msg, type) {
         const el = document.getElementById('status');
@@ -653,17 +596,6 @@
 
       async function triggerScrape() {
         const btn = document.getElementById('run-btn');
-        const token = document.getElementById('github-token').value.trim();
-        
-        if (!token) {
-          showStatus('Enter your GitHub token first', 'error');
-          document.getElementById('token-section').style.display = 'block';
-          return;
-        }
-
-        localStorage.setItem('github_token', token);
-        document.getElementById('token-section').style.display = 'none';
-
         const keywords = document.getElementById('keywords').value.trim() || 'data engineer';
         const location = document.getElementById('location').value.trim() || 'India';
         const results = document.getElementById('results').value || '40';
@@ -673,29 +605,19 @@
         btn.innerHTML = '<span class="spinner"></span> Starting...';
 
         try {
-          const res = await fetch(
-            `https://api.github.com/repos/${GITHUB_USER}/${GITHUB_REPO}/actions/workflows/scrape.yml/dispatches`,
-            {
-              method: 'POST',
-              headers: {
-                'Accept': 'application/vnd.github.v3+json',
-                'Authorization': `token ${token}`,
-                'Content-Type': 'application/json'
-              },
-              body: JSON.stringify({
-                ref: BRANCH,
-                inputs: { keywords, location, results, timePosted }
-              })
-            }
-          );
+          // Call our serverless API endpoint (token is stored securely on server)
+          const res = await fetch('/api/trigger', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ keywords, location, results, timePosted })
+          });
 
-          if (res.status === 204) {
-            showStatus('Scraper started! Results in 3-5 minutes.', 'success');
-          } else if (res.status === 401) {
-            showStatus('Invalid token. Check and try again.', 'error');
-            document.getElementById('token-section').style.display = 'block';
+          const data = await res.json();
+
+          if (res.ok && data.success) {
+            showStatus('Scraper started! Results in 3-5 minutes. Refresh the page to see new files.', 'success');
           } else {
-            showStatus('Failed to start scraper', 'error');
+            showStatus(data.error || 'Failed to start scraper', 'error');
           }
         } catch (e) {
           showStatus('Network error: ' + e.message, 'error');
