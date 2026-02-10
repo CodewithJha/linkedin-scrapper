@@ -7,6 +7,10 @@ export async function writeCsv(records, outputDir) {
   const filename = `linkedin-jobs-${timestamp}.csv`;
   const targetPath = path.resolve(outputDir, filename);
 
+  // Add UTF-8 BOM for Excel compatibility
+  const BOM = '\uFEFF';
+  fs.writeFileSync(targetPath, BOM, 'utf-8');
+
   const csvWriter = createObjectCsvWriter({
     path: targetPath,
     header: [
@@ -19,7 +23,8 @@ export async function writeCsv(records, outputDir) {
       { id: 'scrapedAt', title: 'ScrapedAt' },
       { id: 'seniority', title: 'SeniorityHint' },
       { id: 'isEntryLevel', title: 'IsEntryLevel' }
-    ]
+    ],
+    append: true // Append after BOM
   });
 
   await csvWriter.writeRecords(records);

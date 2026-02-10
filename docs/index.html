@@ -528,14 +528,14 @@
                     <span class="file-meta">${dateStr}</span>
                   </div>
                 </div>
-                <a href="${downloadUrl}" class="file-download" download>
+                <button class="file-download" onclick="downloadCSV('${downloadUrl}', '${f.name}')">
                   <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                     <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
                     <polyline points="7 10 12 15 17 10"></polyline>
                     <line x1="12" y1="15" x2="12" y2="3"></line>
                   </svg>
-                  Download
-                </a>
+                  Download CSV
+                </button>
               </div>
             `;
           }).join('');
@@ -552,6 +552,31 @@
             </div>
           `;
           filesSubtitleEl.textContent = 'Error loading files';
+        }
+      }
+
+      // Force download CSV file (works around browser showing raw text)
+      async function downloadCSV(url, filename) {
+        try {
+          const response = await fetch(url);
+          const text = await response.text();
+          
+          // Create blob with BOM for Excel compatibility
+          const BOM = '\uFEFF';
+          const blob = new Blob([BOM + text], { type: 'text/csv;charset=utf-8;' });
+          
+          // Create download link
+          const link = document.createElement('a');
+          link.href = URL.createObjectURL(blob);
+          link.download = filename;
+          document.body.appendChild(link);
+          link.click();
+          document.body.removeChild(link);
+          URL.revokeObjectURL(link.href);
+        } catch (err) {
+          console.error('Download failed:', err);
+          // Fallback: open in new tab
+          window.open(url, '_blank');
         }
       }
 
