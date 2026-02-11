@@ -41,13 +41,32 @@ export async function runSession(config) {
     // Persist history AFTER a successful export so future sessions stay unique
     markJobsAsSeen(jobs, seenData);
 
-    // Send email if configured
-    if (email?.to && email?.from && email?.smtpHost) {
-      await sendResults(email, csvPath, {
-        keywords,
-        location,
-        count: jobs.length
-      });
+    // Send email if configured (skip placeholder/example values)
+    const hasPlaceholder = (str) => {
+      if (!str) return true;
+      const lower = str.toLowerCase();
+      return lower.includes('example.com') || lower.includes('example_') || str === '';
+    };
+    
+    const hasValidEmail = email?.to && email?.from && email?.smtpHost &&
+      !hasPlaceholder(email.smtpHost) &&
+      !hasPlaceholder(email.to) &&
+      !hasPlaceholder(email.from);
+
+    if (hasValidEmail) {
+      try {
+        await sendResults(email, csvPath, {
+          keywords,
+          location,
+          count: jobs.length
+        });
+        console.log('[pipeline] Email sent successfully');
+      } catch (err) {
+        console.warn('[pipeline] Failed to send email:', err.message);
+        console.log('[pipeline] Continuing despite email failure...');
+      }
+    } else if (email?.smtpHost) {
+      console.log('[pipeline] Skipping email (placeholder config detected)');
     }
 
     return { csvPath, jobs };

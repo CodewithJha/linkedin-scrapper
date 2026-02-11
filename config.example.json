@@ -20,11 +20,11 @@
   "enrichJobDetails": true,
   "outputDir": "out",
   "email": {
-    "smtpHost": "smtp.example.com",
+    "smtpHost": "",
     "smtpPort": 587,
-    "smtpUser": "example_user",
-    "smtpPass": "example_password",
-    "to": "you@example.com",
-    "from": "LinkedIn Scraper <you@example.com>"
+    "smtpUser": "",
+    "smtpPass": "",
+    "to": "",
+    "from": ""
   }
 }
