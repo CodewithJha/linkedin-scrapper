@@ -3,9 +3,6 @@
   "version": "0.1.0",
   "type": "module",
   "main": "src/main.js",
-  "engines": {
-    "node": ">=18.x <=20.x"
-  },
   "scripts": {
     "start": "node src/server.js",
     "start:scheduler": "node src/main.js",
