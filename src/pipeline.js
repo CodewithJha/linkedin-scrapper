@@ -41,13 +41,27 @@ export async function runSession(config) {
     // Persist history AFTER a successful export so future sessions stay unique
     markJobsAsSeen(jobs, seenData);
 
-    // Send email if configured
-    if (email?.to && email?.from && email?.smtpHost) {
-      await sendResults(email, csvPath, {
-        keywords,
-        location,
-        count: jobs.length
-      });
+    // Send email if configured (skip example/placeholder values)
+    const isValidEmail = email?.to && 
+                        email?.from && 
+                        email?.smtpHost && 
+                        !email.smtpHost.includes('example.com') &&
+                        !email.to.includes('example.com');
+    
+    if (isValidEmail) {
+      try {
+        await sendResults(email, csvPath, {
+          keywords,
+          location,
+          count: jobs.length
+        });
+        console.log('[pipeline] Email sent successfully');
+      } catch (err) {
+        console.warn('[pipeline] Failed to send email:', err.message);
+        console.log('[pipeline] Continuing despite email failure...');
+      }
+    } else {
+      console.log('[pipeline] Skipping email (no valid email config)');
     }
 
     return { csvPath, jobs };
