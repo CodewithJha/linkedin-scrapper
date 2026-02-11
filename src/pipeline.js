@@ -46,7 +46,8 @@ export async function runSession(config) {
                         email?.from && 
                         email?.smtpHost && 
                         !email.smtpHost.includes('example.com') &&
-                        !email.to.includes('example.com');
+                        !email.to.includes('example.com') &&
+                        !email.from.includes('example.com');
     
     if (isValidEmail) {
       try {
