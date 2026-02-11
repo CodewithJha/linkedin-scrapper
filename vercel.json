@@ -1,16 +1,10 @@
 {
   "version": 2,
-  "buildCommand": null,
-  "outputDirectory": "frontend",
   "functions": {
-    "frontend/api/*.js": {
+    "api/*.js": {
       "runtime": "@vercel/node@3.0.0"
     }
   },
-  "rewrites": [
-    { "source": "/api/(.*)", "destination": "/api/$1" },
-    { "source": "/(.*)", "destination": "/index.html" }
-  ],
   "build": {
     "env": {
       "NODE_VERSION": "20"
