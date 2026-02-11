@@ -3,28 +3,27 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>LinkedIn Jobs Pipeline</title>
+    <title>LinkedIn Jobs Scraper</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
     <style>
       :root {
-        --bg-primary: #0f1419;
-        --bg-secondary: #1a1f26;
-        --bg-card: rgba(26, 31, 38, 0.8);
-        --bg-card-hover: rgba(36, 43, 52, 0.9);
-        --border: rgba(255, 255, 255, 0.06);
-        --border-light: rgba(255, 255, 255, 0.1);
-        --text-primary: #f1f5f9;
-        --text-secondary: #94a3b8;
-        --text-muted: #64748b;
-        --accent: #d4a574;
-        --accent-hover: #e5b885;
-        --accent-glow: rgba(212, 165, 116, 0.15);
-        --success: #4ade80;
-        --success-glow: rgba(74, 222, 128, 0.2);
-        --warning: #fbbf24;
-        --warning-glow: rgba(251, 191, 36, 0.2);
+        --bg-dark: #050505;
+        --bg-card: #0c0c0c;
+        --bg-card-hover: #111111;
+        --bg-input: #0a0a0a;
+        --border: #1a1a1a;
+        --border-hover: #2a2a2a;
+        --text: #ffffff;
+        --text-dim: #888888;
+        --text-muted: #555555;
+        --accent-1: #ff6b35;
+        --accent-2: #f7931a;
+        --accent-gradient: linear-gradient(135deg, #ff6b35 0%, #f7931a 50%, #ffbe0b 100%);
+        --glow-orange: rgba(255, 107, 53, 0.4);
+        --success: #00ff88;
+        --error: #ff4757;
       }
 
       * {
@@ -33,317 +32,257 @@
         box-sizing: border-box;
       }
 
-      body {
-        font-family: 'DM Sans', -apple-system, BlinkMacSystemFont, sans-serif;
-        background: var(--bg-primary);
-        color: var(--text-primary);
-        min-height: 100vh;
-        line-height: 1.6;
+      html {
+        scroll-behavior: smooth;
       }
 
-      /* Subtle grid background */
-      body::before {
-        content: '';
+      body {
+        font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+        background: var(--bg-dark);
+        color: var(--text);
+        min-height: 100vh;
+        line-height: 1.6;
+        overflow-x: hidden;
+      }
+
+      .bg-gradient {
         position: fixed;
         top: 0;
         left: 0;
         right: 0;
         bottom: 0;
-        background-image: 
-          linear-gradient(rgba(255, 255, 255, 0.02) 1px, transparent 1px),
-          linear-gradient(90deg, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
-        background-size: 60px 60px;
+        background: 
+          radial-gradient(ellipse 80% 50% at 20% -20%, rgba(255, 107, 53, 0.15) 0%, transparent 50%),
+          radial-gradient(ellipse 60% 40% at 80% 100%, rgba(247, 147, 26, 0.1) 0%, transparent 50%),
+          radial-gradient(ellipse 40% 60% at 50% 50%, rgba(255, 190, 11, 0.05) 0%, transparent 70%);
         pointer-events: none;
         z-index: 0;
       }
 
-      .container {
-        max-width: 1100px;
-        margin: 0 auto;
-        padding: 0 24px;
-        position: relative;
+      .noise {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+        opacity: 0.03;
+        pointer-events: none;
         z-index: 1;
       }
 
-      /* Header */
-      header {
-        padding: 32px 0;
-        border-bottom: 1px solid var(--border);
+      .container {
+        max-width: 720px;
+        margin: 0 auto;
+        padding: 0 20px;
+        position: relative;
+        z-index: 2;
       }
 
-      .header-content {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        flex-wrap: wrap;
-        gap: 16px;
+      header {
+        padding: 60px 0 40px;
+        text-align: center;
       }
 
       .logo {
-        display: flex;
-        align-items: center;
-        gap: 14px;
-      }
-
-      .hero-intro {
-        margin-top: 18px;
-        color: var(--text-secondary);
-        font-size: 13px;
-        display: flex;
-        flex-wrap: wrap;
-        gap: 10px;
-        align-items: center;
-      }
-
-      .hero-intro-strong {
-        color: var(--text-primary);
-        font-weight: 600;
-      }
-
-      .pill {
         display: inline-flex;
         align-items: center;
-        gap: 6px;
-        padding: 4px 10px;
-        border-radius: 999px;
-        background: rgba(148, 163, 184, 0.08);
-        border: 1px solid var(--border);
-        font-size: 11px;
-        text-transform: uppercase;
-        letter-spacing: 0.4px;
-      }
-
-      .pill-dot {
-        width: 6px;
-        height: 6px;
-        border-radius: 999px;
-        background: var(--accent);
+        gap: 16px;
+        margin-bottom: 16px;
       }
 
       .logo-icon {
-        width: 44px;
-        height: 44px;
-        background: linear-gradient(135deg, var(--accent), #c49a6c);
-        border-radius: 12px;
+        width: 56px;
+        height: 56px;
+        background: var(--accent-gradient);
+        border-radius: 16px;
         display: flex;
         align-items: center;
         justify-content: center;
-        font-size: 20px;
-        box-shadow: 0 4px 20px var(--accent-glow);
+        font-size: 28px;
+        box-shadow: 
+          0 0 40px var(--glow-orange),
+          0 0 80px rgba(255, 107, 53, 0.2);
+        animation: glow-pulse 3s ease-in-out infinite;
       }
 
-      .logo-text h1 {
-        font-family: 'Outfit', sans-serif;
-        font-size: 22px;
-        font-weight: 600;
-        letter-spacing: -0.5px;
+      @keyframes glow-pulse {
+        0%, 100% { box-shadow: 0 0 40px var(--glow-orange), 0 0 80px rgba(255, 107, 53, 0.2); }
+        50% { box-shadow: 0 0 60px var(--glow-orange), 0 0 120px rgba(255, 107, 53, 0.3); }
       }
 
-      .logo-text p {
-        font-size: 13px;
-        color: var(--text-muted);
-        margin-top: 2px;
+      h1 {
+        font-family: 'Space Grotesk', sans-serif;
+        font-size: 32px;
+        font-weight: 700;
+        letter-spacing: -1px;
+        background: var(--accent-gradient);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
       }
 
-      .live-indicator {
-        display: flex;
-        align-items: center;
-        gap: 8px;
-        padding: 8px 16px;
-        background: var(--bg-card);
-        border: 1px solid var(--border);
-        border-radius: 100px;
-        font-size: 13px;
-        font-weight: 500;
+      .tagline {
+        color: var(--text-dim);
+        font-size: 15px;
+        margin-top: 8px;
+        font-weight: 400;
       }
 
-      .live-dot {
-        width: 8px;
-        height: 8px;
-        border-radius: 50%;
-        background: var(--success);
-        box-shadow: 0 0 12px var(--success-glow);
-        animation: pulse 2s ease-in-out infinite;
-      }
-
-      .live-dot.busy {
-        background: var(--warning);
-        box-shadow: 0 0 12px var(--warning-glow);
-      }
-
-      @keyframes pulse {
-        0%, 100% { opacity: 1; transform: scale(1); }
-        50% { opacity: 0.7; transform: scale(1.1); }
-      }
-
-      /* Main Content */
       main {
-        padding: 40px 0 60px;
+        padding-bottom: 80px;
       }
 
-      .grid {
-        display: grid;
-        gap: 20px;
-      }
-
-      .grid-2 {
-        grid-template-columns: 1fr;
-      }
-
-      @media (min-width: 768px) {
-        .grid-2 {
-          grid-template-columns: 1fr 1fr;
-        }
-      }
-
-      /* Cards */
       .card {
         background: var(--bg-card);
         border: 1px solid var(--border);
-        border-radius: 16px;
-        padding: 24px;
-        backdrop-filter: blur(10px);
+        border-radius: 24px;
+        padding: 32px;
+        margin-bottom: 24px;
+        position: relative;
+        overflow: hidden;
         transition: all 0.3s ease;
       }
 
-      .card:hover {
-        border-color: var(--border-light);
-        background: var(--bg-card-hover);
+      .card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 1px;
+        background: linear-gradient(90deg, transparent, rgba(255,107,53,0.3), transparent);
+        opacity: 0;
+        transition: opacity 0.3s ease;
+      }
+
+      .card:hover::before {
+        opacity: 1;
       }
 
       .card-header {
         display: flex;
         align-items: center;
-        justify-content: space-between;
-        margin-bottom: 20px;
+        gap: 12px;
+        margin-bottom: 28px;
+      }
+
+      .card-icon {
+        width: 40px;
+        height: 40px;
+        background: rgba(255, 107, 53, 0.1);
+        border: 1px solid rgba(255, 107, 53, 0.2);
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 18px;
       }
 
       .card-title {
-        font-family: 'Outfit', sans-serif;
-        font-size: 14px;
-        font-weight: 600;
-        color: var(--text-secondary);
-        text-transform: uppercase;
-        letter-spacing: 0.5px;
-      }
-
-      .card-badge {
-        padding: 4px 10px;
-        background: var(--accent-glow);
-        color: var(--accent);
-        border-radius: 6px;
-        font-size: 11px;
-        font-weight: 600;
-        text-transform: uppercase;
-        letter-spacing: 0.3px;
-      }
-
-      /* Status Card */
-      .status-value {
-        font-family: 'Outfit', sans-serif;
-        font-size: 32px;
-        font-weight: 700;
-        color: var(--text-primary);
-        margin-bottom: 4px;
-      }
-
-      .status-label {
-        font-size: 14px;
-        color: var(--text-muted);
-      }
-
-      .status-grid {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: 20px;
-        margin-top: 24px;
-        padding-top: 20px;
-        border-top: 1px solid var(--border);
-      }
-
-      .status-item {
-        display: flex;
-        flex-direction: column;
-        gap: 4px;
-      }
-
-      .status-item-value {
-        font-family: 'Outfit', sans-serif;
+        font-family: 'Space Grotesk', sans-serif;
         font-size: 18px;
         font-weight: 600;
+        letter-spacing: -0.3px;
       }
 
-      .status-item-label {
-        font-size: 12px;
-        color: var(--text-muted);
-      }
-
-      /* Actions Card */
-      .input-group {
-        display: flex;
-        flex-direction: column;
-        gap: 12px;
-        margin-bottom: 20px;
-      }
-
-      .input-row {
+      .form-grid {
         display: grid;
         grid-template-columns: 1fr 1fr;
-        gap: 12px;
+        gap: 16px;
       }
 
-      @media (max-width: 500px) {
-        .input-row {
-          grid-template-columns: 1fr;
-        }
+      @media (max-width: 560px) {
+        .form-grid { grid-template-columns: 1fr; }
       }
 
-      input {
+      .form-group {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+      }
+
+      .form-group.full-width {
+        grid-column: 1 / -1;
+      }
+
+      label {
+        font-size: 12px;
+        font-weight: 600;
+        color: var(--text-dim);
+        text-transform: uppercase;
+        letter-spacing: 0.8px;
+      }
+
+      input, select {
         width: 100%;
-        padding: 14px 16px;
-        background: var(--bg-primary);
+        padding: 16px 20px;
+        background: var(--bg-input);
         border: 1px solid var(--border);
-        border-radius: 10px;
-        color: var(--text-primary);
-        font-family: 'DM Sans', sans-serif;
-        font-size: 14px;
+        border-radius: 14px;
+        color: var(--text);
+        font-family: 'Inter', sans-serif;
+        font-size: 15px;
         transition: all 0.2s ease;
+        -webkit-appearance: none;
       }
 
       input::placeholder {
         color: var(--text-muted);
       }
 
-      input:focus {
+      input:focus, select:focus {
         outline: none;
-        border-color: var(--accent);
-        box-shadow: 0 0 0 3px var(--accent-glow);
+        border-color: var(--accent-1);
+        box-shadow: 0 0 0 4px rgba(255, 107, 53, 0.1);
+      }
+
+      select {
+        cursor: pointer;
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%23888' stroke-width='2'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+        background-repeat: no-repeat;
+        background-position: right 16px center;
+        background-size: 16px;
+        padding-right: 48px;
+      }
+
+      select option {
+        background: var(--bg-card);
+        color: var(--text);
       }
 
       .btn {
         display: inline-flex;
         align-items: center;
         justify-content: center;
-        gap: 8px;
-        padding: 14px 28px;
+        gap: 12px;
+        padding: 18px 32px;
         border: none;
-        border-radius: 10px;
-        font-family: 'Outfit', sans-serif;
-        font-size: 15px;
+        border-radius: 14px;
+        font-family: 'Space Grotesk', sans-serif;
+        font-size: 16px;
         font-weight: 600;
         cursor: pointer;
-        transition: all 0.2s ease;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        width: 100%;
+        margin-top: 24px;
+        position: relative;
+        overflow: hidden;
       }
 
       .btn-primary {
-        background: linear-gradient(135deg, var(--accent), #c49a6c);
-        color: #1a1f26;
-        box-shadow: 0 4px 20px var(--accent-glow);
+        background: var(--accent-gradient);
+        color: #000;
+        box-shadow: 
+          0 4px 24px rgba(255, 107, 53, 0.3),
+          inset 0 1px 0 rgba(255,255,255,0.2);
       }
 
       .btn-primary:hover:not(:disabled) {
         transform: translateY(-2px);
-        box-shadow: 0 8px 30px var(--accent-glow);
+        box-shadow: 
+          0 8px 40px rgba(255, 107, 53, 0.4),
+          inset 0 1px 0 rgba(255,255,255,0.2);
       }
 
       .btn-primary:active:not(:disabled) {
@@ -351,83 +290,76 @@
       }
 
       .btn:disabled {
-        opacity: 0.6;
+        opacity: 0.5;
         cursor: not-allowed;
-        transform: none;
+        transform: none !important;
       }
 
-      .btn-icon {
-        width: 18px;
-        height: 18px;
-      }
-
-      .input-hint {
-        font-size: 12px;
-        color: var(--text-muted);
-        margin-top: 4px;
-      }
-
-      /* Schedule Bar */
-      .schedule-bar {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        flex-wrap: wrap;
-        gap: 24px;
-        padding: 16px 24px;
-        background: var(--bg-card);
-        border: 1px solid var(--border);
-        border-radius: 12px;
-        margin-top: 20px;
-      }
-
-      .schedule-item {
-        display: flex;
-        align-items: center;
-        gap: 8px;
-        font-size: 13px;
-        color: var(--text-secondary);
-      }
-
-      .schedule-item strong {
-        color: var(--text-primary);
-        font-weight: 600;
-      }
-
-      .schedule-divider {
-        width: 1px;
+      .btn svg {
+        width: 20px;
         height: 20px;
-        background: var(--border);
       }
 
-      @media (max-width: 600px) {
-        .schedule-divider {
-          display: none;
-        }
-        .schedule-bar {
-          gap: 12px;
-        }
+      .spinner {
+        width: 20px;
+        height: 20px;
+        border: 2px solid transparent;
+        border-top-color: currentColor;
+        border-radius: 50%;
+        animation: spin 0.7s linear infinite;
       }
 
-      /* Files Section */
-      .files-section {
-        margin-top: 32px;
+      @keyframes spin {
+        to { transform: rotate(360deg); }
       }
 
-      .section-header {
+      .status {
+        margin-top: 20px;
+        padding: 16px 20px;
+        border-radius: 12px;
+        font-size: 14px;
+        display: none;
+        align-items: center;
+        gap: 12px;
+        animation: slideIn 0.3s ease;
+      }
+
+      @keyframes slideIn {
+        from { opacity: 0; transform: translateY(-8px); }
+        to { opacity: 1; transform: translateY(0); }
+      }
+
+      .status.show { display: flex; }
+      .status.success {
+        background: rgba(0, 255, 136, 0.08);
+        border: 1px solid rgba(0, 255, 136, 0.2);
+        color: var(--success);
+      }
+      .status.error {
+        background: rgba(255, 71, 87, 0.08);
+        border: 1px solid rgba(255, 71, 87, 0.2);
+        color: var(--error);
+      }
+      .status.info {
+        background: rgba(255, 107, 53, 0.08);
+        border: 1px solid rgba(255, 107, 53, 0.2);
+        color: var(--accent-1);
+      }
+
+      .files-header {
         display: flex;
         align-items: center;
         justify-content: space-between;
-        margin-bottom: 16px;
+        margin-bottom: 20px;
       }
 
-      .section-title {
-        font-family: 'Outfit', sans-serif;
-        font-size: 18px;
+      .files-title {
+        font-family: 'Space Grotesk', sans-serif;
+        font-size: 20px;
         font-weight: 600;
       }
 
-      .section-subtitle {
+      .files-count {
         font-size: 13px;
         color: var(--text-muted);
       }
@@ -445,306 +377,332 @@
         padding: 16px 20px;
         background: var(--bg-card);
         border: 1px solid var(--border);
-        border-radius: 12px;
+        border-radius: 16px;
         transition: all 0.2s ease;
       }
 
       .file-item:hover {
-        border-color: var(--border-light);
+        border-color: var(--border-hover);
         background: var(--bg-card-hover);
+        transform: translateX(4px);
       }
 
       .file-info {
         display: flex;
         align-items: center;
         gap: 14px;
+        overflow: hidden;
       }
 
       .file-icon {
-        width: 40px;
-        height: 40px;
-        background: var(--accent-glow);
-        border-radius: 10px;
+        width: 44px;
+        height: 44px;
+        background: rgba(255, 107, 53, 0.08);
+        border: 1px solid rgba(255, 107, 53, 0.15);
+        border-radius: 12px;
         display: flex;
         align-items: center;
         justify-content: center;
-        color: var(--accent);
-        font-size: 18px;
+        font-size: 20px;
+        flex-shrink: 0;
       }
 
       .file-details {
-        display: flex;
-        flex-direction: column;
-        gap: 2px;
+        overflow: hidden;
       }
 
       .file-name {
-        font-weight: 600;
+        font-weight: 500;
         font-size: 14px;
-        color: var(--text-primary);
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
       }
 
-      .file-meta {
+      .file-date {
         font-size: 12px;
         color: var(--text-muted);
+        margin-top: 2px;
       }
 
-      .file-download {
+      .file-btn {
         display: flex;
         align-items: center;
-        gap: 6px;
-        padding: 8px 16px;
+        gap: 8px;
+        padding: 10px 18px;
         background: transparent;
         border: 1px solid var(--border);
-        border-radius: 8px;
-        color: var(--text-secondary);
+        border-radius: 10px;
+        color: var(--text-dim);
         font-size: 13px;
         font-weight: 500;
-        text-decoration: none;
+        cursor: pointer;
         transition: all 0.2s ease;
+        flex-shrink: 0;
       }
 
-      .file-download:hover {
-        border-color: var(--accent);
-        color: var(--accent);
-        background: var(--accent-glow);
+      .file-btn:hover {
+        border-color: var(--accent-1);
+        color: var(--accent-1);
+        background: rgba(255, 107, 53, 0.05);
       }
 
-      .empty-state {
+      .file-btn svg {
+        width: 16px;
+        height: 16px;
+      }
+
+      .empty {
         text-align: center;
         padding: 48px 24px;
         color: var(--text-muted);
       }
 
-      .empty-state-icon {
-        font-size: 48px;
-        margin-bottom: 16px;
-        opacity: 0.5;
-      }
-
-      .empty-state-text {
-        font-size: 14px;
-      }
-
-      /* Loading spinner */
-      .spinner {
-        width: 18px;
-        height: 18px;
-        border: 2px solid transparent;
-        border-top-color: currentColor;
-        border-radius: 50%;
-        animation: spin 0.8s linear infinite;
-      }
-
-      @keyframes spin {
-        to { transform: rotate(360deg); }
-      }
-
-      /* Toast notifications */
-      .toast {
-        position: fixed;
-        bottom: 24px;
-        right: 24px;
-        padding: 14px 20px;
-        background: var(--bg-card);
-        border: 1px solid var(--border);
-        border-radius: 10px;
-        font-size: 14px;
-        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
-        transform: translateY(100px);
-        opacity: 0;
-        transition: all 0.3s ease;
-        z-index: 1000;
-      }
-
-      .toast.show {
-        transform: translateY(0);
-        opacity: 1;
-      }
-
-      .toast.success {
-        border-color: var(--success);
-      }
-
-      .toast.error {
-        border-color: #ef4444;
-      }
-
-      /* Resume Matcher Styles */
-      label[for="resume-file"] > div:hover {
-        border-color: var(--accent);
-        background: var(--bg-card-hover);
-      }
-
-      #resume-file:focus + div {
-        border-color: var(--accent);
-        box-shadow: 0 0 0 3px var(--accent-glow);
-      }
-
-      textarea {
-        width: 100%;
-        padding: 14px 16px;
-        background: var(--bg-primary);
-        border: 1px solid var(--border);
-        border-radius: 10px;
-        color: var(--text-primary);
-        font-family: 'DM Sans', sans-serif;
-        font-size: 14px;
-        resize: vertical;
-        transition: all 0.2s ease;
-      }
-
-      textarea::placeholder {
+      .footer {
+        text-align: center;
+        padding: 40px 0;
         color: var(--text-muted);
+        font-size: 13px;
       }
 
-      textarea:focus {
-        outline: none;
-        border-color: var(--accent);
-        box-shadow: 0 0 0 3px var(--accent-glow);
+      .footer a {
+        color: var(--accent-1);
+        text-decoration: none;
       }
 
-      .skill-tag {
-        padding: 4px 10px;
-        border-radius: 6px;
-        font-size: 11px;
-        font-weight: 500;
-        display: inline-block;
+      .footer a:hover {
+        text-decoration: underline;
       }
 
-      .skill-tag.matching {
-        background: rgba(74, 222, 128, 0.15);
+      .badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        padding: 6px 12px;
+        background: rgba(0, 255, 136, 0.1);
+        border: 1px solid rgba(0, 255, 136, 0.2);
+        border-radius: 20px;
+        font-size: 12px;
         color: var(--success);
+        margin-top: 12px;
       }
 
-      .skill-tag.missing {
-        background: rgba(239, 68, 68, 0.15);
-        color: #ef4444;
+      .badge-dot {
+        width: 6px;
+        height: 6px;
+        background: var(--success);
+        border-radius: 50%;
+        animation: pulse 2s ease-in-out infinite;
       }
 
-      .skill-tag.critical {
-        background: rgba(251, 191, 36, 0.15);
-        color: var(--warning);
-        font-weight: 600;
-      }
-
-      .skill-tag.found {
-        background: var(--accent-glow);
-        color: var(--accent);
+      @keyframes pulse {
+        0%, 100% { opacity: 1; }
+        50% { opacity: 0.5; }
       }
     </style>
   </head>
   <body>
+    <div class="bg-gradient"></div>
+    <div class="noise"></div>
+    
     <div class="container">
       <header>
-        <div class="header-content">
-          <div class="logo">
-            <div class="logo-icon">⚡</div>
-            <div class="logo-text">
-              <h1>Jobs Pipeline</h1>
-              <p>Daily LinkedIn jobs for data engineers in India</p>
-            </div>
-          </div>
-          <div class="live-indicator">
-            <span class="live-dot" id="status-dot"></span>
-            <span id="status-label">Connecting...</span>
-          </div>
+        <div class="logo">
+          <div class="logo-icon">⚡</div>
         </div>
-        <div class="hero-intro">
-          <span class="hero-intro-strong">Automation schedule:</span>
-          <span class="pill">
-            <span class="pill-dot"></span>
-            1 session / 24 hours
-          </span>
-          <span class="pill">
-            <span class="pill-dot"></span>
-            ~40 new jobs per run
-          </span>
+        <h1>LinkedIn Jobs Scraper</h1>
+        <p class="tagline">Automated job discovery with smart filtering</p>
+        <div class="badge">
+          <span class="badge-dot"></span>
+          Ready to scrape
         </div>
       </header>
 
       <main>
-        <div class="grid grid-2">
-          <!-- Status Card -->
-          <div class="card">
-            <div class="card-header">
-              <span class="card-title">Pipeline Status</span>
-              <span class="card-badge" id="mode-badge">Auto</span>
+        <div class="card">
+          <div class="card-header">
+            <div class="card-icon">🎯</div>
+            <h2 class="card-title">Search Parameters</h2>
+          </div>
+          
+          <div class="form-grid">
+            <div class="form-group">
+              <label>Job Role</label>
+              <input type="text" id="keywords" placeholder="data engineer" value="data engineer" />
             </div>
-            <div class="status-value" id="jobs-count">--</div>
-            <div class="status-label">jobs collected today</div>
-            <div class="status-grid">
-              <div class="status-item">
-                <span class="status-item-value" id="last-run-time">--</span>
-                <span class="status-item-label">Last run</span>
-              </div>
-              <div class="status-item">
-                <span class="status-item-value" id="total-sessions">--</span>
-                <span class="status-item-label">Sessions today</span>
-              </div>
+            
+            <div class="form-group">
+              <label>Location</label>
+              <input type="text" id="location" placeholder="India" value="India" />
+            </div>
+            
+            <div class="form-group">
+              <label>Max Results</label>
+              <input type="number" id="results" min="10" max="100" value="40" />
+            </div>
+            
+            <div class="form-group">
+              <label>Posted Within</label>
+              <select id="timePosted">
+                <option value="past24h">Last 24 hours</option>
+                <option value="pastWeek">Last week</option>
+                <option value="any">Any time</option>
+              </select>
             </div>
           </div>
-
-          <!-- Actions Card -->
-          <div class="card">
-            <div class="card-header">
-              <span class="card-title">Quick Actions</span>
-            </div>
-            <div class="input-group">
-              <div class="input-row">
-                <input type="text" id="keywords" placeholder="Keywords (e.g., data engineer)" />
-                <input type="text" id="location" placeholder="Location (e.g., India)" />
-              </div>
-              <input type="number" id="results" min="10" max="100" placeholder="Results per session (default: 40)" />
-            </div>
-            <button class="btn btn-primary" id="run-btn" style="width: 100%;">
-              <svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                <polygon points="5 3 19 12 5 21 5 3"></polygon>
-              </svg>
-              Run Session Now
-            </button>
-            <p class="input-hint">Override defaults for this session only</p>
-          </div>
-        </div>
-
-        <!-- Schedule Bar -->
-        <div class="schedule-bar" id="schedule-bar">
-          <div class="schedule-item">
-            <span>Sessions per day:</span>
-            <strong id="sessions-per-day">--</strong>
-          </div>
-          <div class="schedule-divider"></div>
-          <div class="schedule-item">
-            <span>Gap between runs:</span>
-            <strong id="gap-hours">--</strong>
-          </div>
-          <div class="schedule-divider"></div>
-          <div class="schedule-item">
-            <span>Current search:</span>
-            <strong id="current-search">--</strong>
+          
+          <button class="btn btn-primary" id="run-btn" onclick="triggerScrape()">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <polygon points="5 3 19 12 5 21 5 3"></polygon>
+            </svg>
+            Start Scraping
+          </button>
+          
+          <div class="status" id="status">
+            <span id="status-icon"></span>
+            <span id="status-text"></span>
           </div>
         </div>
 
-        <!-- Files Section -->
-        <div class="files-section" style="margin-top: 40px;">
-          <div class="section-header">
-            <div>
-              <h2 class="section-title">Recent Exports</h2>
-              <p class="section-subtitle" id="files-subtitle">Loading...</p>
-            </div>
+        <div class="card">
+          <div class="files-header">
+            <h2 class="files-title">Recent Exports</h2>
+            <span class="files-count" id="files-count"></span>
           </div>
           <div class="files-list" id="files-list">
-            <div class="empty-state">
-              <div class="empty-state-icon">📂</div>
-              <p class="empty-state-text">No exports yet. Run a session to generate CSV files.</p>
-            </div>
+            <div class="empty">Loading...</div>
           </div>
         </div>
       </main>
+
+      <footer class="footer">
+        <a href="https://github.com/CodewithJha/linkedin-scrapper" target="_blank">View on GitHub</a>
+      </footer>
     </div>
 
-    <div class="toast" id="toast"></div>
+    <script>
+      const GITHUB_USER = 'CodewithJha';
+      const GITHUB_REPO = 'linkedin-scrapper';
+      const BRANCH = 'main';
 
-    <script type="module" src="/app.js"></script>
+      function showStatus(msg, type) {
+        const el = document.getElementById('status');
+        const icon = document.getElementById('status-icon');
+        const text = document.getElementById('status-text');
+        el.className = `status show ${type}`;
+        icon.textContent = type === 'success' ? '✓' : type === 'error' ? '✗' : '→';
+        text.textContent = msg;
+      }
+
+      async function triggerScrape() {
+        const btn = document.getElementById('run-btn');
+        const keywords = document.getElementById('keywords').value.trim() || 'data engineer';
+        const location = document.getElementById('location').value.trim() || 'India';
+        const results = document.getElementById('results').value || '40';
+        const timePosted = document.getElementById('timePosted').value;
+
+        btn.disabled = true;
+        btn.innerHTML = '<span class="spinner"></span> Starting...';
+
+        try {
+          // Call our serverless API endpoint (token is stored securely on server)
+          const res = await fetch('/api/trigger', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ keywords, location, results, timePosted })
+          });
+
+          const data = await res.json();
+
+          if (res.ok && data.success) {
+            showStatus('Scraper started! Results in 3-5 minutes. Refresh the page to see new files.', 'success');
+          } else {
+            showStatus(data.error || 'Failed to start scraper', 'error');
+          }
+        } catch (e) {
+          showStatus('Network error: ' + e.message, 'error');
+        } finally {
+          btn.disabled = false;
+          btn.innerHTML = `
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+              <polygon points="5 3 19 12 5 21 5 3"></polygon>
+            </svg>
+            Start Scraping
+          `;
+        }
+      }
+
+      async function downloadCSV(url, name) {
+        try {
+          const res = await fetch(url);
+          const text = await res.text();
+          const blob = new Blob(['\uFEFF' + text], { type: 'text/csv;charset=utf-8;' });
+          const link = document.createElement('a');
+          link.href = URL.createObjectURL(blob);
+          link.download = name;
+          link.click();
+          URL.revokeObjectURL(link.href);
+        } catch {
+          window.open(url, '_blank');
+        }
+      }
+
+      async function loadFiles() {
+        const list = document.getElementById('files-list');
+        const count = document.getElementById('files-count');
+
+        try {
+          const res = await fetch(`https://api.github.com/repos/${GITHUB_USER}/${GITHUB_REPO}/contents/out?ref=${BRANCH}`);
+          if (!res.ok) throw new Error();
+          
+          const files = (await res.json())
+            .filter(f => f.name.endsWith('.csv'))
+            .sort((a, b) => b.name.localeCompare(a.name))
+            .slice(0, 12);
+
+          if (!files.length) {
+            list.innerHTML = '<div class="empty">No exports yet. Run the scraper!</div>';
+            count.textContent = '';
+            return;
+          }
+
+          count.textContent = `${files.length} files`;
+
+          list.innerHTML = files.map(f => {
+            const m = f.name.match(/(\d{4})-(\d{2})-(\d{2})T(\d{2})-(\d{2})/);
+            let date = 'Unknown';
+            if (m) {
+              const d = new Date(`${m[1]}-${m[2]}-${m[3]}T${m[4]}:${m[5]}:00`);
+              date = d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' });
+            }
+            const url = `https://raw.githubusercontent.com/${GITHUB_USER}/${GITHUB_REPO}/${BRANCH}/out/${f.name}`;
+            return `
+              <div class="file-item">
+                <div class="file-info">
+                  <div class="file-icon">📄</div>
+                  <div class="file-details">
+                    <div class="file-name">${f.name}</div>
+                    <div class="file-date">${date}</div>
+                  </div>
+                </div>
+                <button class="file-btn" onclick="downloadCSV('${url}','${f.name}')">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                    <polyline points="7 10 12 15 17 10"/>
+                    <line x1="12" y1="15" x2="12" y2="3"/>
+                  </svg>
+                  Download
+                </button>
+              </div>
+            `;
+          }).join('');
+        } catch {
+          list.innerHTML = '<div class="empty">Failed to load files</div>';
+        }
+      }
+
+      loadFiles();
+      setInterval(loadFiles, 60000);
+    </script>
   </body>
 </html>
