@@ -109,5 +109,7 @@ jobs:
               MSG="$MSG in $LOCATION"
             fi
             git commit -m "$MSG"
+            # Pull latest changes and rebase before pushing
+            git pull --rebase origin main
             git push
           fi
