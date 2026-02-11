@@ -46,6 +46,8 @@ export async function runSession(config) {
     const hasPlaceholder = (str) => {
       if (!str) return true;
       const lower = str.toLowerCase();
+      // Note: This is checking for placeholder config values (e.g., "smtp.example.com"),
+      // not URL sanitization. This prevents attempting to send emails with example configs.
       return lower.includes('example.com') || 
              lower.includes('example_') || 
              str === '' || 
