@@ -42,12 +42,22 @@ export async function runSession(config) {
     markJobsAsSeen(jobs, seenData);
 
     // Send email if configured (skip example/placeholder values)
+    // Check for common placeholder patterns in email configuration
+    const hasPlaceholder = (str) => {
+      if (!str) return true;
+      const lower = str.toLowerCase();
+      return lower.includes('example.com') || 
+             lower.includes('example_') || 
+             str === '' || 
+             lower === 'smtp.example.com';
+    };
+    
     const isValidEmail = email?.to && 
                         email?.from && 
                         email?.smtpHost && 
-                        !email.smtpHost.includes('example.com') &&
-                        !email.to.includes('example.com') &&
-                        !email.from.includes('example.com');
+                        !hasPlaceholder(email.smtpHost) &&
+                        !hasPlaceholder(email.to) &&
+                        !hasPlaceholder(email.from);
     
     if (isValidEmail) {
       try {
