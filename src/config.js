@@ -73,7 +73,7 @@ export function loadConfig() {
 
   const raw = fs.readFileSync(CONFIG_PATH, 'utf-8');
   const userConfig = JSON.parse(raw);
-  return {
+  const merged = {
     ...defaultConfig,
     ...userConfig,
     email: {
@@ -81,6 +81,24 @@ export function loadConfig() {
       ...(userConfig.email || {})
     }
   };
+
+  // If the user changes the main `keywords` away from the default "data engineer"
+  // but does NOT explicitly provide `keywordVariants`, we should not keep using
+  // the Data Engineer‑specific variants. Otherwise, searches for other roles
+  // (e.g. "frontend developer") will still be dominated by data‑engineer queries.
+  const userProvidedVariants = Object.prototype.hasOwnProperty.call(
+    userConfig,
+    'keywordVariants'
+  );
+  const effectiveKeywords =
+    typeof merged.keywords === 'string' ? merged.keywords.trim().toLowerCase() : '';
+  const defaultKeywords = defaultConfig.keywords.trim().toLowerCase();
+
+  if (!userProvidedVariants && effectiveKeywords && effectiveKeywords !== defaultKeywords) {
+    merged.keywordVariants = [];
+  }
+
+  return merged;
 }
 
 export function ensureOutputDir(dirPath) {
