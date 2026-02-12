@@ -679,7 +679,18 @@
     "https://in.linkedin.com/jobs/view/data-engineer-at-as-technology-corporation-4363236362",
     "https://in.linkedin.com/jobs/view/data-engineer-talend-and-sql-at-people-prime-worldwide-4363970047",
     "https://in.linkedin.com/jobs/view/data-engineer-ii-amazon-payment-products-at-amazon-4365192472",
-    "https://in.linkedin.com/jobs/view/data-engineer-irc283109-at-globallogic-4360845242"
+    "https://in.linkedin.com/jobs/view/data-engineer-irc283109-at-globallogic-4360845242",
+    "https://in.linkedin.com/jobs/view/software-engineer-ii-python-data-engineer-at-factset-4363246469",
+    "https://in.linkedin.com/jobs/view/data-analyst-at-firstsource-4371504183",
+    "https://in.linkedin.com/jobs/view/data-analyst-l4-at-wipro-4371433029",
+    "https://in.linkedin.com/jobs/view/test-engineer-at-a-thon-4371504436",
+    "https://in.linkedin.com/jobs/view/project-engineer-at-epiroc-4326671743",
+    "https://in.linkedin.com/jobs/view/data-analyst-at-easpire-technolabs-inc-4371847879",
+    "https://in.linkedin.com/jobs/view/databricks-data-engineer-at-exponentia-ai-4371852137",
+    "https://in.linkedin.com/jobs/view/cloud-data-engineer-at-tnt-techies-guide-4371811098",
+    "https://in.linkedin.com/jobs/view/associate-azure-data-engineer-remote-work-at-techolution-4371314086",
+    "https://in.linkedin.com/jobs/view/data-scientist-at-hcltech-4363904001",
+    "https://in.linkedin.com/jobs/view/snowflake-developer-at-sky-systems-inc-skysys-4371414937"
   ],
   "titleCompanyKeys": [
     "software engineer internship | frontend|ramp",
@@ -1360,8 +1371,19 @@
     "data engineer|as technology corporation",
     "data engineer talend and sql|people prime worldwide",
     "data engineer ii, amazon payment products|amazon",
-    "data engineer irc283109|globallogic"
+    "data engineer irc283109|globallogic",
+    "software engineer ii - python data engineer|factset",
+    "data analyst|firstsource",
+    "data analyst l4|wipro",
+    "test engineer|a-thon",
+    "project engineer|epiroc",
+    "data analyst|easpire technolabs inc.",
+    "databricks data engineer|exponentia.ai",
+    "cloud data engineer|tnt techies guide",
+    "associate azure data engineer - remote work|techolution",
+    "data scientist|hcltech",
+    "snowflake developer|sky systems, inc. (skysys)"
   ],
-  "lastUpdated": "2026-02-12T12:08:11.364Z",
-  "totalCount": 679
+  "lastUpdated": "2026-02-12T13:18:25.793Z",
+  "totalCount": 690
 }
