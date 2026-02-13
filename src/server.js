@@ -4,7 +4,7 @@ import { fileURLToPath } from 'url';
 import fs from 'fs';
 import { loadConfig, ensureOutputDir } from './config.js';
 import { runSession } from './pipeline.js';
-import { buildScheduler } from './scheduler.js';
+import { buildScheduler, buildDailyIstScheduler } from './scheduler.js';
 import { getSeenJobsStats } from './deduplicator.js';
 
 const __filename = fileURLToPath(import.meta.url);
@@ -128,15 +128,35 @@ app.post('/api/run', async (req, res) => {
   return res.json(result);
 });
 
+function createSchedulerFromConfig(runFn) {
+  if (config.scheduleMode === 'daily_ist') {
+    console.log(
+      `[scheduler] using daily_ist mode at ${config.dailyIstTime || '10:00'} IST`
+    );
+    return buildDailyIstScheduler(
+      {
+        istTime: config.dailyIstTime
+      },
+      runFn
+    );
+  }
+
+  console.log(
+    `[scheduler] using gap mode: ${config.sessionsPerDay} sessions/day, gaps ${config.minGapHours}-${config.maxGapHours}h`
+  );
+
+  return buildScheduler(
+    {
+      sessionsPerDay: config.sessionsPerDay,
+      minGapHours: config.minGapHours,
+      maxGapHours: config.maxGapHours
+    },
+    runFn
+  );
+}
+
 // Start scheduler for automatic sessions
-const scheduler = buildScheduler(
-  {
-    sessionsPerDay: config.sessionsPerDay,
-    minGapHours: config.minGapHours,
-    maxGapHours: config.maxGapHours
-  },
-  runNow
-);
+const scheduler = createSchedulerFromConfig(runNow);
 scheduler.start();
 
 const PORT = process.env.PORT || 4001;
