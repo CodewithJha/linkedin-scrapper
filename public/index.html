@@ -565,6 +565,56 @@
           </div>
         </div>
 
+        <!-- Email Finder Card -->
+        <div class="card">
+          <div class="card-header">
+            <div class="card-icon">📧</div>
+            <h2 class="card-title">Email Finder (Beta)</h2>
+          </div>
+
+          <div class="form-grid">
+            <div class="form-group full-width">
+              <label>LinkedIn Profile URL (optional)</label>
+              <input
+                type="url"
+                id="emailProfileUrl"
+                placeholder="https://www.linkedin.com/in/username"
+              />
+            </div>
+
+            <div class="form-group full-width">
+              <label>Full Name *</label>
+              <input
+                type="text"
+                id="emailFullName"
+                placeholder="John Doe"
+              />
+            </div>
+
+            <div class="form-group full-width">
+              <label>Company Website *</label>
+              <input
+                type="url"
+                id="emailCompanyWebsite"
+                placeholder="https://acme.com"
+              />
+            </div>
+          </div>
+
+          <button class="btn btn-primary" id="email-btn" onclick="triggerEmailFinder()">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M4 4h16v16H4z"></path>
+              <polyline points="4 4 12 13 20 4"></polyline>
+            </svg>
+            Find Email
+          </button>
+
+          <div class="status" id="email-status">
+            <span id="email-status-icon"></span>
+            <span id="email-status-text"></span>
+          </div>
+        </div>
+
         <div class="card">
           <div class="files-header">
             <h2 class="files-title">Recent Exports</h2>
@@ -629,6 +679,77 @@
               <polygon points="5 3 19 12 5 21 5 3"></polygon>
             </svg>
             Start Scraping
+          `;
+        }
+      }
+
+      function showEmailStatus(msg, type) {
+        const el = document.getElementById('email-status');
+        const icon = document.getElementById('email-status-icon');
+        const text = document.getElementById('email-status-text');
+        el.className = `status show ${type}`;
+        icon.textContent = type === 'success' ? '✓' : type === 'error' ? '✗' : '→';
+        text.textContent = msg;
+      }
+
+      async function triggerEmailFinder() {
+        const btn = document.getElementById('email-btn');
+        const profileUrl = document.getElementById('emailProfileUrl').value.trim();
+        const fullName = document.getElementById('emailFullName').value.trim();
+        const companyWebsiteUrl = document.getElementById('emailCompanyWebsite').value.trim();
+
+        if (!fullName || !companyWebsiteUrl) {
+          showEmailStatus('Please enter full name and company website.', 'error');
+          return;
+        }
+
+        btn.disabled = true;
+        btn.innerHTML = '<span class="spinner"></span> Finding...';
+
+        try {
+          const res = await fetch('/api/find-email', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              profileUrl: profileUrl || undefined,
+              fullName,
+              companyWebsiteUrl
+            })
+          });
+
+          const data = await res.json().catch(() => ({}));
+
+          if (!res.ok) {
+            const msg = data.error || 'Failed to find email';
+            showEmailStatus(msg, 'error');
+            return;
+          }
+
+          if (!data.bestEmail) {
+            showEmailStatus('No email could be found. Try checking the company website/domain.', 'info');
+            return;
+          }
+
+          const alternatives = Array.isArray(data.candidates)
+            ? data.candidates.filter((e) => e !== data.bestEmail)
+            : [];
+
+          let message = `Best guess: ${data.bestEmail}`;
+          if (alternatives.length > 0) {
+            message += ` | Alternatives: ${alternatives.join(', ')}`;
+          }
+
+          showEmailStatus(message, 'success');
+        } catch (e) {
+          showEmailStatus('Network error: ' + e.message, 'error');
+        } finally {
+          btn.disabled = false;
+          btn.innerHTML = `
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+              <path d="M4 4h16v16H4z"></path>
+              <polyline points="4 4 12 13 20 4"></polyline>
+            </svg>
+            Find Email
           `;
         }
       }
