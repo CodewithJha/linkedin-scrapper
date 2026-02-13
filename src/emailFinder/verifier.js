@@ -1,7 +1,10 @@
 // Email verification layer.
-// IMPORTANT: This first iteration avoids any provider-specific APIs so we
-// don't break existing deployments. It only defines the abstraction and a
-// very naive "no-op" verifier that can be upgraded later.
+// This module keeps verification lightweight and self-contained so it can
+// run in serverless environments without extra dependencies.
+
+import dns from 'dns';
+
+const dnsPromises = dns.promises;
 
 /**
  * Shape of a verification result.
@@ -14,9 +17,8 @@
 
 /**
  * Naive verifier: simply ranks the first candidate highest and
- * marks everything as "unknown" deliverability. This allows us to wire
- * the feature end-to-end without introducing outbound SMTP or third-party
- * APIs yet (which can be added later with environment-based config).
+ * marks everything as "unknown" deliverability. This is used as a
+ * safe fallback when DNS checks fail or aren't available.
  *
  * @param {string[]} candidates
  * @returns {Promise<VerificationResult[]>}
@@ -36,17 +38,51 @@ export async function naiveVerifyCandidates(candidates = []) {
 
 /**
  * Placeholder hook for a future "smart" verifier.
- * In a later iteration, this function can:
- *  - Use MX record lookups + SMTP RCPT checks (where infrastructure allows),
- *  - Or call an HTTP-based verification API controlled via env vars.
- *
- * For now, we just delegate to the naive verifier so the rest of the
- * pipeline can be implemented and tested safely.
  *
  * @param {string[]} candidates
  * @returns {Promise<VerificationResult[]>}
  */
 export async function verifyEmailCandidates(candidates = []) {
-  return naiveVerifyCandidates(candidates);
+  if (!Array.isArray(candidates) || candidates.length === 0) {
+    return [];
+  }
+
+  // Try a lightweight MX check for the domain of the first candidate.
+  // If anything fails, fall back to naive behaviour.
+  const first = String(candidates[0] || '');
+  const [, domain] = first.split('@');
+
+  if (!domain) {
+    return naiveVerifyCandidates(candidates);
+  }
+
+  let hasMx = false;
+
+  try {
+    const records = await dnsPromises.resolveMx(domain);
+    hasMx = Array.isArray(records) && records.length > 0;
+  } catch {
+    // DNS lookup failed (network / domain); treat as unknown and fall back.
+    return naiveVerifyCandidates(candidates);
+  }
+
+  if (!hasMx) {
+    // Domain has no MX; very unlikely to be a valid corporate email host.
+    return candidates.map((email) => ({
+      email,
+      confidence: 'low',
+      deliverable: false,
+      reasons: ['no-mx-records']
+    }));
+  }
+
+  // Domain looks like it accepts mail. Mark the first pattern as high
+  // confidence and others as medium/low.
+  return candidates.map((email, index) => ({
+    email,
+    confidence: index === 0 ? 'high' : index < 3 ? 'medium' : 'low',
+    deliverable: true,
+    reasons: ['mx-ok']
+  }));
 }
 

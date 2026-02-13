@@ -3,9 +3,9 @@
 // both in serverless (Vercel) and in GitHub Actions workflows.
 
 /**
- * Best-effort extraction of hostname from a URL-like string.
+ * Best-effort extraction of hostname from a URL-like or domain-like string.
  * Accepts inputs like "https://acme.com", "http://acme.com/careers",
- * or just "acme.com".
+ * "acme.com" or "sub.acme.com".
  *
  * @param {string} raw
  * @returns {string | null}
@@ -28,18 +28,23 @@ export function extractHostname(raw = '') {
 }
 
 /**
- * Placeholder / first-step resolver for a company domain.
+ * Resolve a company domain from various hints.
  *
- * In the first iteration we keep this simple:
- * - If a company website URL is known, we just extract the hostname.
- * - Later, we can extend this to perform a search (e.g. using a web API)
- *   when only the company name is available.
+ * Resolution order (first non-empty wins):
+ * 1. Explicit `domain` field (e.g. "acme.com")
+ * 2. `companyWebsiteUrl` (e.g. "https://acme.com/careers")
+ * 3. (Future) `companyName` via web search / mapping
  *
- * @param {{ companyName?: string, companyWebsiteUrl?: string }} input
+ * @param {{ domain?: string, companyName?: string, companyWebsiteUrl?: string }} input
  * @returns {Promise<string | null>}
  */
 export async function resolveCompanyDomain(input = {}) {
-  const { companyWebsiteUrl, companyName } = input;
+  const { domain, companyWebsiteUrl, companyName } = input;
+
+  if (domain) {
+    const hostFromDomain = extractHostname(domain);
+    if (hostFromDomain) return hostFromDomain;
+  }
 
   if (companyWebsiteUrl) {
     const host = extractHostname(companyWebsiteUrl);
@@ -47,8 +52,8 @@ export async function resolveCompanyDomain(input = {}) {
   }
 
   // Future extension: perform a search like "ACME official website" and
-  // extract the primary domain from the results using a web API.
-  // For now, we just return null if we don't have a direct website URL.
+  // extract the primary domain from the results using a web API when only
+  // companyName is available.
   if (companyName) {
     const cleaned = String(companyName).trim();
     if (!cleaned) return null;

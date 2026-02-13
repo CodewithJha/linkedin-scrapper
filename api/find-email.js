@@ -56,7 +56,8 @@ export default async function handler(req, res) {
       profileUrl,
       fullName,
       companyName,
-      companyWebsiteUrl
+      companyWebsiteUrl,
+      domain
     });
 
     return res.status(200).json({

@@ -12,7 +12,7 @@ import { verifyEmailCandidates } from './verifier.js';
  * LinkedIn is only used as a hint source.
  *
  * @param {{ fullName?: string, firstName?: string, lastName?: string, domain: string }} input
- * @returns {Promise<{ bestEmail: string | null, candidates: string[], verifications: any[] }>}
+ * @returns {Promise<{ bestEmail: string | null, candidates: string[], verifications: any[], domain: string | null }>}
  */
 export async function findEmailWithKnownDomain(input) {
   const candidates = generateEmailCandidates(input);
@@ -20,7 +20,8 @@ export async function findEmailWithKnownDomain(input) {
     return {
       bestEmail: null,
       candidates: [],
-      verifications: []
+      verifications: [],
+      domain: null
     };
   }
 
@@ -50,10 +51,17 @@ export async function findEmailWithKnownDomain(input) {
     bestEmail = candidates[0] || null;
   }
 
+  const domain = (() => {
+    const sample = candidates[0] || '';
+    const parts = sample.split('@');
+    return parts.length === 2 ? parts[1] : null;
+  })();
+
   return {
     bestEmail,
     candidates,
-    verifications
+    verifications,
+    domain
   };
 }
 
@@ -64,17 +72,17 @@ export async function findEmailWithKnownDomain(input) {
  * This is intentionally left as a thin stub so we can decide together
  * how much LinkedIn HTML parsing vs. manual user input we want.
  *
- * @param {{ profileUrl: string, fullName?: string, companyName?: string, companyWebsiteUrl?: string }} input
+ * @param {{ profileUrl?: string, fullName?: string, companyName?: string, companyWebsiteUrl?: string, domain?: string }} input
  * @returns {Promise<{ bestEmail: string | null, candidates: string[], verifications: any[], meta: any }>}
  */
 export async function findEmailFromLinkedInProfile(input) {
-  const { profileUrl, fullName, companyName, companyWebsiteUrl } = input || {};
+  const { profileUrl, fullName, companyName, companyWebsiteUrl, domain } = input || {};
 
-  // In the first iteration we rely on caller to provide at least
-  // fullName + companyWebsiteUrl or fullName + resolved domain.
-  const domain = await resolveCompanyDomain({ companyName, companyWebsiteUrl });
+  // In this iteration we rely on caller to provide at least
+  // fullName + (domain | companyWebsiteUrl) or fullName + resolved domain.
+  const resolvedDomain = await resolveCompanyDomain({ domain, companyName, companyWebsiteUrl });
 
-  if (!domain) {
+  if (!resolvedDomain) {
     return {
       bestEmail: null,
       candidates: [],
@@ -90,7 +98,7 @@ export async function findEmailFromLinkedInProfile(input) {
 
   const coreResult = await findEmailWithKnownDomain({
     fullName,
-    domain
+    domain: resolvedDomain
   });
 
   return {
@@ -99,7 +107,7 @@ export async function findEmailFromLinkedInProfile(input) {
       profileUrl: profileUrl || null,
       fullName: fullName || null,
       companyName: companyName || null,
-      domain
+      domain: coreResult.domain || resolvedDomain
     }
   };
 }

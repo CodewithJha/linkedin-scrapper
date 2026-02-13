@@ -592,11 +592,11 @@
             </div>
 
             <div class="form-group full-width">
-              <label>Company Website *</label>
+              <label>Company Website or Domain *</label>
               <input
-                type="url"
+                type="text"
                 id="emailCompanyWebsite"
-                placeholder="https://acme.com"
+                placeholder="https://acme.com or acme.com"
               />
             </div>
           </div>
@@ -696,10 +696,10 @@
         const btn = document.getElementById('email-btn');
         const profileUrl = document.getElementById('emailProfileUrl').value.trim();
         const fullName = document.getElementById('emailFullName').value.trim();
-        const companyWebsiteUrl = document.getElementById('emailCompanyWebsite').value.trim();
+        const companyWebsiteOrDomain = document.getElementById('emailCompanyWebsite').value.trim();
 
-        if (!fullName || !companyWebsiteUrl) {
-          showEmailStatus('Please enter full name and company website.', 'error');
+        if (!fullName || !companyWebsiteOrDomain) {
+          showEmailStatus('Please enter full name and company website or domain.', 'error');
           return;
         }
 
@@ -713,7 +713,8 @@
             body: JSON.stringify({
               profileUrl: profileUrl || undefined,
               fullName,
-              companyWebsiteUrl
+              companyWebsiteUrl: companyWebsiteOrDomain,
+              domain: companyWebsiteOrDomain
             })
           });
 
@@ -734,7 +735,14 @@
             ? data.candidates.filter((e) => e !== data.bestEmail)
             : [];
 
-          let message = `Best guess: ${data.bestEmail}`;
+          const bestVerification =
+            Array.isArray(data.verifications) && data.verifications.length > 0
+              ? data.verifications.find((v) => v.email === data.bestEmail) || data.verifications[0]
+              : null;
+
+          const confidence = bestVerification?.confidence || 'unknown';
+
+          let message = `Best guess: ${data.bestEmail} (confidence: ${confidence})`;
           if (alternatives.length > 0) {
             message += ` | Alternatives: ${alternatives.join(', ')}`;
           }
