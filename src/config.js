@@ -44,6 +44,12 @@ const defaultConfig = {
   sessionsPerDay: 1,
   minGapHours: 24,
   maxGapHours: 24,
+  // Scheduling mode:
+  // - "gap": existing behavior (run sessionsPerDay with random gaps between minGapHours/maxGapHours)
+  // - "daily_ist": run once per day at `dailyIstTime` in IST (Asia/Kolkata), e.g. "10:00"
+  scheduleMode: 'daily_ist',
+  // Used only when scheduleMode = "daily_ist"
+  dailyIstTime: '10:00',
   headless: true,
   usePublicSearch: true,
   // Time filter: "any" | "past24h" | "pastWeek"

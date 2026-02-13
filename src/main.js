@@ -1,5 +1,5 @@
 import { loadConfig } from './config.js';
-import { buildScheduler } from './scheduler.js';
+import { buildScheduler, buildDailyIstScheduler } from './scheduler.js';
 import { runSession } from './pipeline.js';
 
 const config = loadConfig();
@@ -14,17 +14,33 @@ async function runOnce() {
 }
 
 function start() {
-  console.log(
-    `[scheduler] starting with ${config.sessionsPerDay} sessions/day and gaps ${config.minGapHours}-${config.maxGapHours}h`
-  );
-  const scheduler = buildScheduler(
-    {
-      sessionsPerDay: config.sessionsPerDay,
-      minGapHours: config.minGapHours,
-      maxGapHours: config.maxGapHours
-    },
-    runOnce
-  );
+  const useDailyIst = config.scheduleMode === 'daily_ist';
+
+  if (useDailyIst) {
+    console.log(
+      `[scheduler] starting in daily_ist mode at ${config.dailyIstTime || '10:00'} IST`
+    );
+  } else {
+    console.log(
+      `[scheduler] starting in gap mode with ${config.sessionsPerDay} sessions/day and gaps ${config.minGapHours}-${config.maxGapHours}h`
+    );
+  }
+
+  const scheduler = useDailyIst
+    ? buildDailyIstScheduler(
+        {
+          istTime: config.dailyIstTime
+        },
+        runOnce
+      )
+    : buildScheduler(
+        {
+          sessionsPerDay: config.sessionsPerDay,
+          minGapHours: config.minGapHours,
+          maxGapHours: config.maxGapHours
+        },
+        runOnce
+      );
   scheduler.start();
 }
 
