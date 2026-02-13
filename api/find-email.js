@@ -2,7 +2,6 @@
 // This does NOT touch the existing job scraper or GitHub workflow trigger.
 
 import { findEmailFromLinkedInProfile, findEmailWithKnownDomain } from '../src/emailFinder/index.js';
-import { logEmailLookup } from '../src/emailFinder/logger.js';
 
 export default async function handler(req, res) {
   if (req.method !== 'POST') {
@@ -30,16 +29,6 @@ export default async function handler(req, res) {
       });
     }
 
-    const baseInput = {
-      profileUrl: profileUrl || null,
-      fullName: fullName || null,
-      firstName: firstName || null,
-      lastName: lastName || null,
-      companyName: companyName || null,
-      companyWebsiteUrl: companyWebsiteUrl || null,
-      domain: domain || null
-    };
-
     // Mode 1: explicit domain provided
     if (domain) {
       const result = await findEmailWithKnownDomain({
@@ -47,12 +36,6 @@ export default async function handler(req, res) {
         firstName,
         lastName,
         domain
-      });
-
-      logEmailLookup({
-        mode: 'known-domain',
-        input: baseInput,
-        result
       });
 
       return res.status(200).json({
@@ -75,12 +58,6 @@ export default async function handler(req, res) {
       companyName,
       companyWebsiteUrl,
       domain
-    });
-
-    logEmailLookup({
-      mode: 'linkedin-style',
-      input: baseInput,
-      result
     });
 
     return res.status(200).json({
