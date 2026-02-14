@@ -3,43 +3,29 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>LinkedIn Jobs Scraper v4</title>
-    <!-- BUILD: 2026-02-11-v4 - NO TOKEN REQUIRED -->
+    <title>LinkedIn Scraper - Job & Email Finder</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
     <style>
       :root {
-        /* Background Colors */
         --bg-main: #050816;
         --bg-secondary: #080f1f;
         --bg-card: #0b1022;
         --bg-card-hover: #0f1528;
         --bg-input: #0a0e1a;
-        
-        /* Accent Colors */
         --accent-primary: #3b82f6;
         --accent-cyan: #1fb7ff;
         --accent-purple: #7c3aed;
-        --accent-magenta: #a855f7;
         --accent-gradient: linear-gradient(135deg, #1fb7ff 0%, #7c3aed 100%);
         --glow-cyan: rgba(31, 183, 255, 0.35);
-        --glow-purple: rgba(124, 58, 237, 0.35);
-        
-        /* Text Colors */
         --text-primary: #f9fafb;
         --text-secondary: #9ca3af;
         --text-muted: #6b7280;
-        
-        /* Border Colors */
         --border: rgba(255, 255, 255, 0.08);
         --border-hover: rgba(59, 130, 246, 0.3);
-        
-        /* Status Colors */
         --success: #00ff88;
         --error: #ff4757;
-        
-        /* Spacing Scale (8px multiples) */
         --spacing-xs: 8px;
         --spacing-sm: 16px;
         --spacing-md: 24px;
@@ -47,7 +33,6 @@
         --spacing-xl: 48px;
         --spacing-2xl: 64px;
         --spacing-3xl: 80px;
-        --spacing-4xl: 120px;
       }
 
       * {
@@ -95,7 +80,7 @@
         z-index: 1;
       }
 
-      /* Sticky Navigation Header */
+      /* Navigation */
       nav {
         position: sticky;
         top: 0;
@@ -105,11 +90,10 @@
         -webkit-backdrop-filter: blur(10px);
         border-bottom: 1px solid var(--border);
         padding: var(--spacing-md) var(--spacing-lg);
-        margin-bottom: var(--spacing-2xl);
       }
 
       .nav-container {
-        max-width: 1400px;
+        max-width: 1200px;
         margin: 0 auto;
         display: flex;
         align-items: center;
@@ -142,7 +126,7 @@
       .nav-links {
         display: flex;
         align-items: center;
-        gap: var(--spacing-lg);
+        gap: var(--spacing-md);
       }
 
       .nav-link {
@@ -151,10 +135,13 @@
         font-size: 14px;
         font-weight: 500;
         transition: color 0.2s ease;
+        padding: 8px 12px;
+        border-radius: 8px;
       }
 
-      .nav-link:hover {
+      .nav-link:hover, .nav-link.active {
         color: var(--accent-cyan);
+        background: rgba(31, 183, 255, 0.1);
       }
 
       .nav-cta {
@@ -175,25 +162,27 @@
       }
 
       .container {
-        max-width: 1400px;
+        max-width: 1200px;
         margin: 0 auto;
-        padding: 0 var(--spacing-lg);
+        padding: var(--spacing-xl) var(--spacing-lg);
         position: relative;
         z-index: 2;
       }
 
-      /* Hero Section */
-      .hero {
-        min-height: 80vh;
-        display: flex;
-        align-items: center;
-        padding: var(--spacing-4xl) 0;
-        gap: var(--spacing-4xl);
+      /* Page Content */
+      .page {
+        display: none;
       }
 
-      .hero-content {
-        flex: 1;
-        max-width: 600px;
+      .page.active {
+        display: block;
+      }
+
+      /* Hero Section */
+      .hero {
+        text-align: center;
+        padding: var(--spacing-2xl) 0;
+        margin-bottom: var(--spacing-2xl);
       }
 
       .hero-label {
@@ -206,41 +195,9 @@
         display: block;
       }
 
-      header {
-        padding: var(--spacing-3xl) 0 var(--spacing-2xl);
-        text-align: left;
-      }
-
-      .logo {
-        display: inline-flex;
-        align-items: center;
-        gap: var(--spacing-sm);
-        margin-bottom: var(--spacing-md);
-      }
-
-      .logo-icon {
-        width: 56px;
-        height: 56px;
-        background: var(--accent-gradient);
-        border-radius: 16px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 28px;
-        box-shadow: 
-          0 0 30px var(--glow-cyan),
-          0 0 60px rgba(31, 183, 255, 0.2);
-        animation: glow-pulse 3s ease-in-out infinite;
-      }
-
-      @keyframes glow-pulse {
-        0%, 100% { box-shadow: 0 0 30px var(--glow-cyan), 0 0 60px rgba(31, 183, 255, 0.2); }
-        50% { box-shadow: 0 0 50px var(--glow-cyan), 0 0 100px rgba(31, 183, 255, 0.35); }
-      }
-
       h1 {
         font-family: 'Space Grotesk', sans-serif;
-        font-size: 56px;
+        font-size: 48px;
         font-weight: 700;
         letter-spacing: -2px;
         line-height: 1.1;
@@ -261,114 +218,38 @@
         margin-top: var(--spacing-md);
         font-weight: 400;
         line-height: 1.6;
+        max-width: 600px;
+        margin-left: auto;
+        margin-right: auto;
       }
 
-      /* Hero Visual - Simple CSS 3D Blob */
-      .hero-visual {
-        flex: 1;
-        max-width: 500px;
-        height: 400px;
-        position: relative;
-        display: flex;
+      .badge {
+        display: inline-flex;
         align-items: center;
-        justify-content: center;
+        gap: 6px;
+        padding: 6px 12px;
+        background: rgba(0, 255, 136, 0.1);
+        border: 1px solid rgba(0, 255, 136, 0.2);
+        border-radius: 20px;
+        font-size: 12px;
+        color: var(--success);
+        margin-top: var(--spacing-md);
       }
 
-      .blob {
-        width: 300px;
-        height: 300px;
+      .badge-dot {
+        width: 6px;
+        height: 6px;
+        background: var(--success);
         border-radius: 50%;
-        background: radial-gradient(circle at 30% 30%, rgba(31, 183, 255, 0.4), rgba(124, 58, 237, 0.3));
-        filter: blur(40px);
-        animation: float 6s ease-in-out infinite;
-        position: relative;
+        animation: pulse 2s ease-in-out infinite;
       }
 
-      .blob::before {
-        content: '';
-        position: absolute;
-        width: 200px;
-        height: 200px;
-        border-radius: 50%;
-        background: radial-gradient(circle at 50% 50%, rgba(59, 130, 246, 0.5), transparent);
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%);
-        box-shadow: 0 0 60px var(--glow-cyan);
+      @keyframes pulse {
+        0%, 100% { opacity: 1; }
+        50% { opacity: 0.5; }
       }
 
-      @keyframes float {
-        0%, 100% { transform: translateY(0) scale(1); }
-        50% { transform: translateY(-20px) scale(1.05); }
-      }
-
-      @media (max-width: 968px) {
-        .nav-links {
-          gap: var(--spacing-md);
-        }
-        
-        .nav-link {
-          font-size: 13px;
-        }
-        
-        .nav-cta {
-          padding: 8px 16px;
-          font-size: 13px;
-        }
-        
-        .hero {
-          flex-direction: column;
-          text-align: center;
-          min-height: auto;
-          padding: var(--spacing-2xl) 0;
-        }
-        
-        .hero-content {
-          max-width: 100%;
-        }
-        
-        header {
-          text-align: center;
-        }
-        
-        h1 {
-          font-size: 40px;
-        }
-        
-        .hero-visual {
-          max-width: 100%;
-          height: 300px;
-        }
-      }
-
-      @media (max-width: 640px) {
-        .nav-container {
-          flex-direction: column;
-          gap: var(--spacing-md);
-        }
-        
-        .nav-links {
-          flex-wrap: wrap;
-          justify-content: center;
-        }
-        
-        .container {
-          padding: 0 var(--spacing-md);
-        }
-        
-        h1 {
-          font-size: 32px;
-        }
-        
-        .tagline {
-          font-size: 16px;
-        }
-      }
-
-      main {
-        padding-bottom: var(--spacing-3xl);
-      }
-
+      /* Cards */
       .card {
         background: var(--bg-card);
         border: 1px solid var(--border);
@@ -379,6 +260,9 @@
         overflow: hidden;
         transition: all 0.3s ease;
         backdrop-filter: blur(10px);
+        max-width: 800px;
+        margin-left: auto;
+        margin-right: auto;
       }
 
       .card::before {
@@ -436,8 +320,10 @@
         gap: 16px;
       }
 
-      @media (max-width: 560px) {
-        .form-grid { grid-template-columns: 1fr; }
+      @media (max-width: 768px) {
+        .form-grid {
+          grid-template-columns: 1fr;
+        }
       }
 
       .form-group {
@@ -492,7 +378,7 @@
 
       select option {
         background: var(--bg-card);
-        color: var(--text);
+        color: var(--text-primary);
       }
 
       .btn {
@@ -533,17 +419,6 @@
         transform: scale(0.98);
       }
 
-      .btn-secondary {
-        background: transparent;
-        border: 1px solid rgba(59, 130, 246, 0.3);
-        color: var(--accent-cyan);
-      }
-
-      .btn-secondary:hover:not(:disabled) {
-        background: rgba(59, 130, 246, 0.1);
-        border-color: var(--accent-cyan);
-      }
-
       .btn:disabled {
         opacity: 0.5;
         cursor: not-allowed;
@@ -563,7 +438,7 @@
         border-radius: 50%;
         animation: spin 0.7s linear infinite;
       }
-      
+
       .btn-primary .spinner {
         border-top-color: var(--text-primary);
       }
@@ -652,6 +527,7 @@
         align-items: center;
         gap: 14px;
         overflow: hidden;
+        flex: 1;
       }
 
       .file-icon {
@@ -669,6 +545,7 @@
 
       .file-details {
         overflow: hidden;
+        flex: 1;
       }
 
       .file-name {
@@ -693,7 +570,7 @@
         background: transparent;
         border: 1px solid var(--border);
         border-radius: 10px;
-        color: var(--text-dim);
+        color: var(--text-secondary);
         font-size: 13px;
         font-weight: 500;
         cursor: pointer;
@@ -718,46 +595,62 @@
         color: var(--text-secondary);
       }
 
-      .footer {
-        text-align: center;
-        padding: var(--spacing-xl) 0;
+      .about-content {
+        max-width: 800px;
+        margin: 0 auto;
+      }
+
+      .about-section {
+        margin-bottom: var(--spacing-xl);
+      }
+
+      .about-section h2 {
+        font-family: 'Space Grotesk', sans-serif;
+        font-size: 24px;
+        font-weight: 600;
+        margin-bottom: var(--spacing-md);
+        color: var(--text-primary);
+      }
+
+      .about-section p {
         color: var(--text-secondary);
-        font-size: 13px;
+        line-height: 1.8;
+        margin-bottom: var(--spacing-sm);
       }
 
-      .footer a {
-        color: var(--accent-cyan);
-        text-decoration: none;
+      .about-section ul {
+        color: var(--text-secondary);
+        line-height: 1.8;
+        margin-left: var(--spacing-lg);
+        margin-top: var(--spacing-sm);
       }
 
-      .footer a:hover {
-        text-decoration: underline;
+      .about-section li {
+        margin-bottom: var(--spacing-xs);
       }
 
-      .badge {
-        display: inline-flex;
-        align-items: center;
-        gap: 6px;
-        padding: 6px 12px;
-        background: rgba(0, 255, 136, 0.1);
-        border: 1px solid rgba(0, 255, 136, 0.2);
-        border-radius: 20px;
-        font-size: 12px;
-        color: var(--success);
-        margin-top: 12px;
-      }
+      @media (max-width: 768px) {
+        .nav-container {
+          flex-direction: column;
+          gap: var(--spacing-md);
+        }
 
-      .badge-dot {
-        width: 6px;
-        height: 6px;
-        background: var(--success);
-        border-radius: 50%;
-        animation: pulse 2s ease-in-out infinite;
-      }
+        .nav-links {
+          flex-wrap: wrap;
+          justify-content: center;
+        }
 
-      @keyframes pulse {
-        0%, 100% { opacity: 1; }
-        50% { opacity: 0.5; }
+        .container {
+          padding: var(--spacing-lg) var(--spacing-md);
+        }
+
+        h1 {
+          font-size: 32px;
+        }
+
+        .tagline {
+          font-size: 16px;
+        }
       }
     </style>
   </head>
@@ -767,36 +660,34 @@
     
     <nav>
       <div class="nav-container">
-        <a href="#" class="nav-logo">
+        <a href="#" class="nav-logo" onclick="showPage('home'); return false;">
           <div class="nav-logo-icon">⚡</div>
           <span>LinkedIn Scraper</span>
         </a>
         <div class="nav-links">
-          <a href="#features" class="nav-link">Features</a>
-          <a href="#exports" class="nav-link">Exports</a>
+          <a href="#" class="nav-link active" onclick="showPage('home'); return false;">Home</a>
+          <a href="#" class="nav-link" onclick="showPage('email'); return false;">Email Scraper</a>
+          <a href="#" class="nav-link" onclick="showPage('exports'); return false;">Exports</a>
+          <a href="#" class="nav-link" onclick="showPage('about'); return false;">About Us</a>
           <a href="https://github.com/CodewithJha/linkedin-scrapper" target="_blank" class="nav-cta">GitHub</a>
         </div>
       </div>
     </nav>
     
     <div class="container">
-      <div class="hero">
-        <div class="hero-content">
-          <span class="hero-label">CYBERSECURITY SOLUTIONS</span>
-          <h1>Soft protection for your <span class="accent">digital</span> assets</h1>
+      <!-- Home Page - Job Scraper -->
+      <div id="page-home" class="page active">
+        <div class="hero">
+          <span class="hero-label">JOB SCRAPING SOLUTIONS</span>
+          <h1>Smart <span class="accent">scraping</span> for your job search</h1>
           <p class="tagline">Automated job discovery with smart filtering. Find the right opportunities faster with our intelligent LinkedIn scraper.</p>
-          <div class="badge" style="margin-top: var(--spacing-md);">
+          <div class="badge">
             <span class="badge-dot"></span>
             Ready to scrape
           </div>
         </div>
-        <div class="hero-visual">
-          <div class="blob"></div>
-        </div>
-      </div>
 
-      <main>
-        <div class="card" id="features">
+        <div class="card">
           <div class="card-header">
             <div class="card-icon">🎯</div>
             <h2 class="card-title">Search Parameters</h2>
@@ -840,13 +731,26 @@
             <span id="status-text"></span>
           </div>
         </div>
+      </div>
 
-        <!-- Email Finder Card -->
+      <!-- Email Scraper Page -->
+      <div id="page-email" class="page">
+        <div class="hero">
+          <span class="hero-label">EMAIL FINDER TOOL</span>
+          <h1>Find professional <span class="accent">emails</span> instantly</h1>
+          <p class="tagline">Discover work emails from LinkedIn profiles and company domains. Smart pattern matching for accurate results.</p>
+        </div>
+
         <div class="card">
           <div class="card-header">
             <div class="card-icon">📧</div>
-            <h2 class="card-title">Email Finder (Beta)</h2>
+            <h2 class="card-title">Email Finder</h2>
           </div>
+
+          <p style="font-size: 13px; color: var(--text-secondary); margin-bottom: var(--spacing-md); line-height: 1.6;">
+            This tool <strong>guesses likely work emails</strong> from name and company domain.
+            Results are <strong>not 100% guaranteed</strong>. Please double-check before using any email.
+          </p>
 
           <div class="form-grid">
             <div class="form-group full-width">
@@ -868,11 +772,11 @@
             </div>
 
             <div class="form-group full-width">
-              <label>Company Website *</label>
+              <label>Company Website or Domain * (e.g. https://acme.com or acme.com)</label>
               <input
-                type="url"
+                type="text"
                 id="emailCompanyWebsite"
-                placeholder="https://acme.com"
+                placeholder="https://acme.com or acme.com"
               />
             </div>
           </div>
@@ -890,8 +794,17 @@
             <span id="email-status-text"></span>
           </div>
         </div>
+      </div>
 
-        <div class="card" id="exports">
+      <!-- Exports Page -->
+      <div id="page-exports" class="page">
+        <div class="hero">
+          <span class="hero-label">EXPORTED FILES</span>
+          <h1>Your <span class="accent">scraped</span> data</h1>
+          <p class="tagline">Download your exported CSV files from previous scraping sessions.</p>
+        </div>
+
+        <div class="card">
           <div class="files-header">
             <h2 class="files-title">Recent Exports</h2>
             <span class="files-count" id="files-count"></span>
@@ -900,11 +813,71 @@
             <div class="empty">Loading...</div>
           </div>
         </div>
-      </main>
+      </div>
 
-      <footer class="footer">
-        <a href="https://github.com/CodewithJha/linkedin-scrapper" target="_blank">View on GitHub</a>
-      </footer>
+      <!-- About Us Page -->
+      <div id="page-about" class="page">
+        <div class="hero">
+          <span class="hero-label">ABOUT THE PROJECT</span>
+          <h1>LinkedIn <span class="accent">Scraper</span> Project</h1>
+          <p class="tagline">An intelligent tool for automated job discovery and email finding.</p>
+        </div>
+
+        <div class="about-content">
+          <div class="about-section">
+            <h2>Project Overview</h2>
+            <p>
+              LinkedIn Scraper is a powerful automation tool designed to help job seekers and recruiters 
+              efficiently discover job opportunities and find professional contact information. The project 
+              combines intelligent web scraping with smart filtering to deliver accurate and relevant results.
+            </p>
+          </div>
+
+          <div class="about-section">
+            <h2>Features</h2>
+            <ul>
+              <li><strong>Job Scraping:</strong> Automatically search and filter LinkedIn job postings based on role, location, and posting date</li>
+              <li><strong>Email Finder:</strong> Intelligent email pattern matching to discover professional work emails</li>
+              <li><strong>Smart Filtering:</strong> Advanced filtering options to find the most relevant opportunities</li>
+              <li><strong>CSV Export:</strong> Export all scraped data in CSV format for easy analysis</li>
+              <li><strong>Automated Scheduling:</strong> Set up automated scraping sessions with customizable intervals</li>
+              <li><strong>Deduplication:</strong> Smart deduplication to avoid processing the same jobs multiple times</li>
+            </ul>
+          </div>
+
+          <div class="about-section">
+            <h2>Technology Stack</h2>
+            <p>
+              Built with modern web technologies including Node.js, Playwright for browser automation, 
+              and Express.js for the API server. The frontend uses vanilla JavaScript with a modern, 
+              responsive design that works seamlessly across all devices.
+            </p>
+          </div>
+
+          <div class="about-section">
+            <h2>Usage</h2>
+            <p>
+              Simply enter your search criteria (job role, location, etc.) and click "Start Scraping". 
+              The tool will automatically browse LinkedIn, collect job postings, and export them to CSV. 
+              For email finding, provide a person's name and company domain to discover their likely work email.
+            </p>
+          </div>
+
+          <div class="about-section">
+            <h2>Open Source</h2>
+            <p>
+              This project is open source and available on GitHub. Contributions, issues, and feature 
+              requests are welcome. The project is maintained to help the community with job searching 
+              and professional networking automation.
+            </p>
+            <p style="margin-top: var(--spacing-md);">
+              <a href="https://github.com/CodewithJha/linkedin-scrapper" target="_blank" style="color: var(--accent-cyan); text-decoration: none;">
+                View on GitHub →
+              </a>
+            </p>
+          </div>
+        </div>
+      </div>
     </div>
 
     <script>
@@ -912,13 +885,40 @@
       const GITHUB_REPO = 'linkedin-scrapper';
       const BRANCH = 'main';
 
+      // Page Navigation
+      function showPage(pageId) {
+        // Hide all pages
+        document.querySelectorAll('.page').forEach(page => {
+          page.classList.remove('active');
+        });
+        
+        // Show selected page
+        const page = document.getElementById(`page-${pageId}`);
+        if (page) {
+          page.classList.add('active');
+        }
+
+        // Update nav links
+        document.querySelectorAll('.nav-link').forEach(link => {
+          link.classList.remove('active');
+        });
+        event?.target?.classList?.add('active');
+
+        // Load files if exports page
+        if (pageId === 'exports') {
+          loadFiles();
+        }
+      }
+
       function showStatus(msg, type) {
         const el = document.getElementById('status');
         const icon = document.getElementById('status-icon');
         const text = document.getElementById('status-text');
-        el.className = `status show ${type}`;
-        icon.textContent = type === 'success' ? '✓' : type === 'error' ? '✗' : '→';
-        text.textContent = msg;
+        if (el && icon && text) {
+          el.className = `status show ${type}`;
+          icon.textContent = type === 'success' ? '✓' : type === 'error' ? '✗' : '→';
+          text.textContent = msg;
+        }
       }
 
       async function triggerScrape() {
@@ -932,7 +932,6 @@
         btn.innerHTML = '<span class="spinner"></span> Starting...';
 
         try {
-          // Call our serverless API endpoint (token is stored securely on server)
           const res = await fetch('/api/trigger', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
@@ -963,19 +962,21 @@
         const el = document.getElementById('email-status');
         const icon = document.getElementById('email-status-icon');
         const text = document.getElementById('email-status-text');
-        el.className = `status show ${type}`;
-        icon.textContent = type === 'success' ? '✓' : type === 'error' ? '✗' : '→';
-        text.textContent = msg;
+        if (el && icon && text) {
+          el.className = `status show ${type}`;
+          icon.textContent = type === 'success' ? '✓' : type === 'error' ? '✗' : '→';
+          text.textContent = msg;
+        }
       }
 
       async function triggerEmailFinder() {
         const btn = document.getElementById('email-btn');
         const profileUrl = document.getElementById('emailProfileUrl').value.trim();
         const fullName = document.getElementById('emailFullName').value.trim();
-        const companyWebsiteUrl = document.getElementById('emailCompanyWebsite').value.trim();
+        const companyWebsiteOrDomain = document.getElementById('emailCompanyWebsite').value.trim();
 
-        if (!fullName || !companyWebsiteUrl) {
-          showEmailStatus('Please enter full name and company website.', 'error');
+        if (!fullName || !companyWebsiteOrDomain) {
+          showEmailStatus('Please enter full name and company website or domain.', 'error');
           return;
         }
 
@@ -989,7 +990,8 @@
             body: JSON.stringify({
               profileUrl: profileUrl || undefined,
               fullName,
-              companyWebsiteUrl
+              companyWebsiteUrl: companyWebsiteOrDomain,
+              domain: companyWebsiteOrDomain
             })
           });
 
@@ -1010,7 +1012,14 @@
             ? data.candidates.filter((e) => e !== data.bestEmail)
             : [];
 
-          let message = `Best guess: ${data.bestEmail}`;
+          const bestVerification =
+            Array.isArray(data.verifications) && data.verifications.length > 0
+              ? data.verifications.find((v) => v.email === data.bestEmail) || data.verifications[0]
+              : null;
+
+          const confidence = bestVerification?.confidence || 'unknown';
+
+          let message = `Best guess: ${data.bestEmail} (confidence: ${confidence})`;
           if (alternatives.length > 0) {
             message += ` | Alternatives: ${alternatives.join(', ')}`;
           }
@@ -1048,6 +1057,8 @@
       async function loadFiles() {
         const list = document.getElementById('files-list');
         const count = document.getElementById('files-count');
+
+        if (!list || !count) return;
 
         try {
           const res = await fetch(`https://api.github.com/repos/${GITHUB_USER}/${GITHUB_REPO}/contents/out?ref=${BRANCH}`);
@@ -1099,6 +1110,7 @@
         }
       }
 
+      // Load files on page load
       loadFiles();
       setInterval(loadFiles, 60000);
     </script>
