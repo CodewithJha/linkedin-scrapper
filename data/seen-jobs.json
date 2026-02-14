@@ -969,7 +969,17 @@
     "https://in.linkedin.com/jobs/view/data-scientist-at-viraaj-hr-solutions-private-limited-4371773805",
     "https://in.linkedin.com/jobs/view/data-scientist-at-citiustech-4373200606",
     "https://in.linkedin.com/jobs/view/etl-developer-at-pinnacle-group-inc-4346868411",
-    "https://in.linkedin.com/jobs/view/jr-data-engineer-at-episeio-business-solutions-4371779616"
+    "https://in.linkedin.com/jobs/view/jr-data-engineer-at-episeio-business-solutions-4371779616",
+    "https://in.linkedin.com/jobs/view/data-scientist-artificial-intelligence-at-ibm-4353824346",
+    "https://in.linkedin.com/jobs/view/machine-learning-engineer-at-ebay-4363979871",
+    "https://in.linkedin.com/jobs/view/ai-ml-engineer-at-ktwo-hiring-4364477083",
+    "https://in.linkedin.com/jobs/view/ai-ml-engineer-at-accenture-in-india-4364326089",
+    "https://in.linkedin.com/jobs/view/ai-ml-engineer-at-vrize-4372985841",
+    "https://in.linkedin.com/jobs/view/data-scientist-at-tata-consultancy-services-4372067318",
+    "https://in.linkedin.com/jobs/view/ai-ml-engineer-at-remotestar-4364535047",
+    "https://in.linkedin.com/jobs/view/data-scientist-advanced-analytics-at-ibm-4349586224",
+    "https://in.linkedin.com/jobs/view/data-scientist-kaggle-grandmaster-%2477-hr-remote-at-crossing-hurdles-4372072478",
+    "https://in.linkedin.com/jobs/view/machine-learning-specialist-at-citiustech-4373208258"
   ],
   "titleCompanyKeys": [
     "software engineer internship | frontend|ramp",
@@ -1940,8 +1950,18 @@
     "data scientist|viraaj hr solutions private limited",
     "data scientist|citiustech",
     "etl developer|pinnacle group, inc.",
-    "jr data engineer|episeio business solutions"
+    "jr data engineer|episeio business solutions",
+    "data scientist-artificial intelligence|ibm",
+    "machine learning engineer|ebay",
+    "ai/ml engineer|ktwo hiring",
+    "ai / ml engineer|accenture in india",
+    "ai ml engineer|vrize",
+    "data scientist|tata consultancy services",
+    "ai/ml engineer|remotestar",
+    "data scientist-advanced analytics|ibm",
+    "data scientist (kaggle-grandmaster) | $77/hr remote|crossing hurdles",
+    "machine learning specialist|citiustech"
   ],
-  "lastUpdated": "2026-02-14T14:29:43.090Z",
-  "totalCount": 969
+  "lastUpdated": "2026-02-14T16:27:55.294Z",
+  "totalCount": 979
 }
