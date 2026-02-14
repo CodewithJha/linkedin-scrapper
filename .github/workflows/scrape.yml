@@ -31,6 +31,9 @@ permissions:
 jobs:
   scrape:
     runs-on: ubuntu-latest
+    # LinkedIn cookie secret must be configured in repository settings
+    env:
+      LINKEDIN_COOKIE: ${{ secrets.LINKEDIN_COOKIE }}
     
     steps:
       - name: Checkout repository
@@ -94,8 +97,6 @@ jobs:
       
       - name: Run scraper
         run: npm run scrape:once
-        env:
-          LINKEDIN_COOKIE: ${{ secrets.LINKEDIN_COOKIE }}
       
       - name: Commit and push new CSVs
         run: |
