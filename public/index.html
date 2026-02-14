@@ -167,6 +167,123 @@
         padding: var(--spacing-xl) var(--spacing-lg);
         position: relative;
         z-index: 2;
+        padding-bottom: 100px;
+      }
+
+      /* Liquid Bottom Navigation - Mobile Only */
+      .bottom-nav {
+        display: none;
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        z-index: 1000;
+        padding: 12px 16px 24px;
+        background: transparent;
+      }
+
+      .bottom-nav-bar {
+        max-width: 400px;
+        margin: 0 auto;
+        background: rgba(11, 16, 34, 0.85);
+        backdrop-filter: blur(20px);
+        -webkit-backdrop-filter: blur(20px);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 32px 32px 0 0;
+        padding: 12px 8px 20px;
+        box-shadow: 
+          0 -4px 32px rgba(0, 0, 0, 0.3),
+          0 0 40px rgba(31, 183, 255, 0.1);
+        position: relative;
+        overflow: hidden;
+      }
+
+      .bottom-nav-bar::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 2px;
+        background: linear-gradient(90deg, 
+          transparent, 
+          var(--accent-cyan), 
+          var(--accent-purple), 
+          transparent
+        );
+        opacity: 0.6;
+      }
+
+      .bottom-nav-items {
+        display: flex;
+        justify-content: space-around;
+        align-items: center;
+        gap: 4px;
+      }
+
+      .bottom-nav-item {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 4px;
+        padding: 8px 12px;
+        border-radius: 16px;
+        text-decoration: none;
+        color: var(--text-secondary);
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        position: relative;
+        min-width: 60px;
+      }
+
+      .bottom-nav-item::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 50%;
+        transform: translateX(-50%) scaleX(0);
+        width: 40px;
+        height: 3px;
+        background: var(--accent-gradient);
+        border-radius: 0 0 4px 4px;
+        transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      }
+
+      .bottom-nav-item.active::before {
+        transform: translateX(-50%) scaleX(1);
+      }
+
+      .bottom-nav-item.active {
+        color: var(--accent-cyan);
+        background: rgba(31, 183, 255, 0.1);
+      }
+
+      .bottom-nav-icon {
+        width: 24px;
+        height: 24px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 20px;
+        transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      }
+
+      .bottom-nav-item.active .bottom-nav-icon {
+        transform: scale(1.1);
+        filter: drop-shadow(0 0 8px var(--glow-cyan));
+      }
+
+      .bottom-nav-label {
+        font-size: 10px;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        margin-top: 2px;
+      }
+
+      .bottom-nav-item:active {
+        transform: scale(0.95);
       }
 
       /* Page Content */
@@ -630,18 +747,17 @@
       }
 
       @media (max-width: 768px) {
-        .nav-container {
-          flex-direction: column;
-          gap: var(--spacing-md);
+        nav {
+          display: none;
         }
 
-        .nav-links {
-          flex-wrap: wrap;
-          justify-content: center;
+        .bottom-nav {
+          display: block;
         }
 
         .container {
           padding: var(--spacing-lg) var(--spacing-md);
+          padding-bottom: 100px;
         }
 
         h1 {
@@ -673,6 +789,34 @@
         </div>
       </div>
     </nav>
+
+    <!-- Liquid Bottom Navigation - Mobile Only -->
+    <div class="bottom-nav">
+      <div class="bottom-nav-bar">
+        <div class="bottom-nav-items">
+          <a href="#" class="bottom-nav-item active" onclick="showPage('home'); return false;">
+            <div class="bottom-nav-icon">🏠</div>
+            <span class="bottom-nav-label">Home</span>
+          </a>
+          <a href="#" class="bottom-nav-item" onclick="showPage('email'); return false;">
+            <div class="bottom-nav-icon">📧</div>
+            <span class="bottom-nav-label">Email</span>
+          </a>
+          <a href="#" class="bottom-nav-item" onclick="showPage('exports'); return false;">
+            <div class="bottom-nav-icon">📁</div>
+            <span class="bottom-nav-label">Exports</span>
+          </a>
+          <a href="#" class="bottom-nav-item" onclick="showPage('about'); return false;">
+            <div class="bottom-nav-icon">ℹ️</div>
+            <span class="bottom-nav-label">About</span>
+          </a>
+          <a href="https://github.com/CodewithJha/linkedin-scrapper" target="_blank" class="bottom-nav-item">
+            <div class="bottom-nav-icon">🔗</div>
+            <span class="bottom-nav-label">GitHub</span>
+          </a>
+        </div>
+      </div>
+    </div>
     
     <div class="container">
       <!-- Home Page - Job Scraper -->
@@ -729,6 +873,17 @@
           <div class="status" id="status">
             <span id="status-icon"></span>
             <span id="status-text"></span>
+          </div>
+        </div>
+
+        <!-- Recent Exports Section on Home Page -->
+        <div class="card" style="margin-top: var(--spacing-lg);">
+          <div class="files-header">
+            <h2 class="files-title">Recent Exports</h2>
+            <span class="files-count" id="home-files-count"></span>
+          </div>
+          <div class="files-list" id="home-files-list">
+            <div class="empty">Loading...</div>
           </div>
         </div>
       </div>
@@ -898,15 +1053,27 @@
           page.classList.add('active');
         }
 
-        // Update nav links
+        // Update top nav links
         document.querySelectorAll('.nav-link').forEach(link => {
           link.classList.remove('active');
         });
         event?.target?.classList?.add('active');
 
-        // Load files if exports page
-        if (pageId === 'exports') {
+        // Update bottom nav items
+        document.querySelectorAll('.bottom-nav-item').forEach(item => {
+          item.classList.remove('active');
+        });
+        const clickedItem = event?.target?.closest('.bottom-nav-item');
+        if (clickedItem) {
+          clickedItem.classList.add('active');
+        }
+
+        // Load files if exports page or home page
+        if (pageId === 'exports' || pageId === 'home') {
           loadFiles();
+          if (pageId === 'home') {
+            loadHomeFiles();
+          }
         }
       }
 
@@ -1110,9 +1277,70 @@
         }
       }
 
+      // Load files for home page
+      async function loadHomeFiles() {
+        const list = document.getElementById('home-files-list');
+        const count = document.getElementById('home-files-count');
+
+        if (!list || !count) return;
+
+        try {
+          const res = await fetch(`https://api.github.com/repos/${GITHUB_USER}/${GITHUB_REPO}/contents/out?ref=${BRANCH}`);
+          if (!res.ok) throw new Error();
+          
+          const files = (await res.json())
+            .filter(f => f.name.endsWith('.csv'))
+            .sort((a, b) => b.name.localeCompare(a.name))
+            .slice(0, 6);
+
+          if (!files.length) {
+            list.innerHTML = '<div class="empty">No exports yet. Run the scraper!</div>';
+            count.textContent = '';
+            return;
+          }
+
+          count.textContent = `${files.length} files`;
+
+          list.innerHTML = files.map(f => {
+            const m = f.name.match(/(\d{4})-(\d{2})-(\d{2})T(\d{2})-(\d{2})/);
+            let date = 'Unknown';
+            if (m) {
+              const d = new Date(`${m[1]}-${m[2]}-${m[3]}T${m[4]}:${m[5]}:00`);
+              date = d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' });
+            }
+            const url = `https://raw.githubusercontent.com/${GITHUB_USER}/${GITHUB_REPO}/${BRANCH}/out/${f.name}`;
+            return `
+              <div class="file-item">
+                <div class="file-info">
+                  <div class="file-icon">📄</div>
+                  <div class="file-details">
+                    <div class="file-name">${f.name}</div>
+                    <div class="file-date">${date}</div>
+                  </div>
+                </div>
+                <button class="file-btn" onclick="downloadCSV('${url}','${f.name}')">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                    <polyline points="7 10 12 15 17 10"/>
+                    <line x1="12" y1="15" x2="12" y2="3"/>
+                  </svg>
+                  Download
+                </button>
+              </div>
+            `;
+          }).join('');
+        } catch {
+          list.innerHTML = '<div class="empty">Failed to load files</div>';
+        }
+      }
+
       // Load files on page load
       loadFiles();
-      setInterval(loadFiles, 60000);
+      loadHomeFiles();
+      setInterval(() => {
+        loadFiles();
+        loadHomeFiles();
+      }, 60000);
     </script>
   </body>
 </html>
