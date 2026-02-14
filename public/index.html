@@ -164,10 +164,18 @@
       .container {
         max-width: 1200px;
         margin: 0 auto;
-        padding: var(--spacing-xl) var(--spacing-lg);
+        padding: 0 var(--spacing-lg);
         position: relative;
         z-index: 2;
         padding-bottom: 100px;
+      }
+
+      .page.active .hero {
+        padding-top: var(--spacing-2xl);
+      }
+
+      #page-home .hero {
+        padding-top: 0;
       }
 
       /* Liquid Bottom Navigation - Mobile Only */
@@ -315,28 +323,47 @@
       /* Hero Section */
       .hero {
         text-align: center;
-        padding: var(--spacing-2xl) 0;
-        margin-bottom: var(--spacing-2xl);
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        padding: var(--spacing-2xl) var(--spacing-lg);
+        margin-bottom: 0;
+        position: relative;
       }
 
       .hero-label {
-        font-size: 12px;
+        font-size: 13px;
         font-weight: 600;
         text-transform: uppercase;
-        letter-spacing: 1.2px;
+        letter-spacing: 1.5px;
         color: var(--accent-cyan);
-        margin-bottom: var(--spacing-md);
+        margin-bottom: var(--spacing-lg);
         display: block;
+      }
+
+      @media (min-width: 769px) {
+        .hero-label {
+          font-size: 14px;
+          margin-bottom: var(--spacing-xl);
+        }
       }
 
       h1 {
         font-family: 'Space Grotesk', sans-serif;
-        font-size: 48px;
+        font-size: 56px;
         font-weight: 700;
         letter-spacing: -2px;
         line-height: 1.1;
         color: var(--text-primary);
         margin-bottom: var(--spacing-md);
+      }
+
+      @media (min-width: 769px) {
+        h1 {
+          font-size: 72px;
+        }
       }
 
       h1 .accent {
@@ -348,26 +375,40 @@
 
       .tagline {
         color: var(--text-secondary);
-        font-size: 18px;
+        font-size: 20px;
         margin-top: var(--spacing-md);
         font-weight: 400;
-        line-height: 1.6;
-        max-width: 600px;
+        line-height: 1.7;
+        max-width: 700px;
         margin-left: auto;
         margin-right: auto;
+      }
+
+      @media (min-width: 769px) {
+        .tagline {
+          font-size: 22px;
+        }
       }
 
       .badge {
         display: inline-flex;
         align-items: center;
         gap: 6px;
-        padding: 6px 12px;
+        padding: 8px 16px;
         background: rgba(0, 255, 136, 0.1);
         border: 1px solid rgba(0, 255, 136, 0.2);
         border-radius: 20px;
-        font-size: 12px;
+        font-size: 13px;
         color: var(--success);
-        margin-top: var(--spacing-md);
+        margin-top: var(--spacing-xl);
+      }
+
+      @media (min-width: 769px) {
+        .badge {
+          font-size: 14px;
+          padding: 10px 20px;
+          margin-top: var(--spacing-2xl);
+        }
       }
 
       .badge-dot {
@@ -777,12 +818,17 @@
           padding-bottom: 100px;
         }
 
+        .hero {
+          min-height: calc(100vh - 80px);
+          padding: var(--spacing-xl) var(--spacing-md);
+        }
+
         h1 {
-          font-size: 32px;
+          font-size: 36px;
         }
 
         .tagline {
-          font-size: 16px;
+          font-size: 18px;
         }
       }
     </style>
