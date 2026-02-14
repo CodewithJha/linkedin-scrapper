@@ -69,7 +69,17 @@ jobs:
             let config = {};
             try { config = JSON.parse(fs.readFileSync('config.json', 'utf-8')); } catch {}
             
-            if ('$KEYWORDS') config.keywords = '$KEYWORDS';
+            if ('$KEYWORDS') {
+              config.keywords = '$KEYWORDS';
+              // If user changes role from default 'data engineer', clear keywordVariants
+              // This ensures only the user's input keyword is used, not data engineer variants
+              const userKeywords = '$KEYWORDS'.trim().toLowerCase();
+              const defaultKeywords = 'data engineer'.toLowerCase();
+              if (userKeywords !== defaultKeywords) {
+                config.keywordVariants = [];
+                console.log('Cleared keywordVariants for custom role:', userKeywords);
+              }
+            }
             if ('$LOCATION') config.location = '$LOCATION';
             if ('$RESULTS' && !isNaN(parseInt('$RESULTS'))) config.resultsPerSession = parseInt('$RESULTS');
             if ('$TIME_POSTED') config.timePosted = '$TIME_POSTED';

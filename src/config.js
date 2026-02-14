@@ -100,8 +100,14 @@ export function loadConfig() {
     typeof merged.keywords === 'string' ? merged.keywords.trim().toLowerCase() : '';
   const defaultKeywords = defaultConfig.keywords.trim().toLowerCase();
 
-  if (!userProvidedVariants && effectiveKeywords && effectiveKeywords !== defaultKeywords) {
-    merged.keywordVariants = [];
+  // Clear keywordVariants if:
+  // 1. User changed keywords from default AND
+  // 2. User didn't explicitly provide keywordVariants (or provided empty array)
+  // This ensures custom roles use only the user's input keyword, not data engineer variants
+  if (effectiveKeywords && effectiveKeywords !== defaultKeywords) {
+    if (!userProvidedVariants || (Array.isArray(userConfig.keywordVariants) && userConfig.keywordVariants.length === 0)) {
+      merged.keywordVariants = [];
+    }
   }
 
   return merged;
