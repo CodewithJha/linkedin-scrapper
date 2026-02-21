@@ -22,12 +22,18 @@ export async function writeCsv(records, outputDir) {
       { id: 'listedAt', title: 'ListedAt' },
       { id: 'scrapedAt', title: 'ScrapedAt' },
       { id: 'seniority', title: 'SeniorityHint' },
-      { id: 'isEntryLevel', title: 'IsEntryLevel' }
+      { id: 'isEntryLevel', title: 'IsEntryLevel' },
+      { id: 'isLikelyStartup', title: 'IsLikelyStartup' }
     ],
     append: true // Append after BOM
   });
 
-  await csvWriter.writeRecords(records);
+  const recordsWithStartup = records.map((r) => ({
+    ...r,
+    isLikelyStartup: r.isLikelyStartup === true ? 'Yes' : 'No'
+  }));
+
+  await csvWriter.writeRecords(recordsWithStartup);
   return targetPath;
 }
 

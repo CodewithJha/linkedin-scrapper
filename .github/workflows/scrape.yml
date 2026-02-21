@@ -24,6 +24,10 @@ on:
         description: 'Time filter (past24h, pastWeek, any)'
         required: false
         default: ''
+      startupsOnly:
+        description: 'Filter to startup-likely companies only'
+        required: false
+        default: 'false'
 
 permissions:
   contents: write
@@ -31,9 +35,6 @@ permissions:
 jobs:
   scrape:
     runs-on: ubuntu-latest
-    # LinkedIn cookie secret must be configured in repository settings
-    env:
-      LINKEDIN_COOKIE: ${{ secrets.LINKEDIN_COOKIE }}
     
     steps:
       - name: Checkout repository
@@ -65,6 +66,7 @@ jobs:
           LOCATION="${{ github.event.inputs.location }}"
           RESULTS="${{ github.event.inputs.results }}"
           TIME_POSTED="${{ github.event.inputs.timePosted }}"
+          STARTUPS_ONLY="${{ github.event.inputs.startupsOnly }}"
           
           # Use Node.js to merge config
           node -e "
@@ -72,20 +74,11 @@ jobs:
             let config = {};
             try { config = JSON.parse(fs.readFileSync('config.json', 'utf-8')); } catch {}
             
-            if ('$KEYWORDS') {
-              config.keywords = '$KEYWORDS';
-              // If user changes role from default 'data engineer', clear keywordVariants
-              // This ensures only the user's input keyword is used, not data engineer variants
-              const userKeywords = '$KEYWORDS'.trim().toLowerCase();
-              const defaultKeywords = 'data engineer'.toLowerCase();
-              if (userKeywords !== defaultKeywords) {
-                config.keywordVariants = [];
-                console.log('Cleared keywordVariants for custom role:', userKeywords);
-              }
-            }
+            if ('$KEYWORDS') config.keywords = '$KEYWORDS';
             if ('$LOCATION') config.location = '$LOCATION';
             if ('$RESULTS' && !isNaN(parseInt('$RESULTS'))) config.resultsPerSession = parseInt('$RESULTS');
             if ('$TIME_POSTED') config.timePosted = '$TIME_POSTED';
+            if ('$STARTUPS_ONLY' === 'true') config.startupsOnly = true;
             
             // Always set headless and output
             config.headless = true;
@@ -97,6 +90,8 @@ jobs:
       
       - name: Run scraper
         run: npm run scrape:once
+        env:
+          LINKEDIN_COOKIE: ${{ secrets.LINKEDIN_COOKIE }}
       
       - name: Commit and push new CSVs
         run: |

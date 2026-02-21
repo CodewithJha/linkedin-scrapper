@@ -950,6 +950,11 @@
                 <option value="any">Any time</option>
               </select>
             </div>
+
+            <div class="form-group full-width" style="flex-direction: row; align-items: center; gap: 12px;">
+              <input type="checkbox" id="startupsOnly" style="width: auto; accent-color: var(--accent-cyan);" />
+              <label for="startupsOnly" style="margin-bottom: 0; text-transform: none;">Startups only — filter to startup-likely companies</label>
+            </div>
           </div>
           
           <button class="btn btn-primary" id="run-btn" onclick="triggerScrape()">
@@ -1183,6 +1188,7 @@
         const location = document.getElementById('location').value.trim() || 'India';
         const results = document.getElementById('results').value || '40';
         const timePosted = document.getElementById('timePosted').value;
+        const startupsOnly = document.getElementById('startupsOnly') ? document.getElementById('startupsOnly').checked : false;
 
         btn.disabled = true;
         btn.innerHTML = '<span class="spinner"></span> Starting...';
@@ -1191,7 +1197,7 @@
           const res = await fetch('/api/trigger', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ keywords, location, results, timePosted })
+            body: JSON.stringify({ keywords, location, results, timePosted, startupsOnly })
           });
 
           const data = await res.json();

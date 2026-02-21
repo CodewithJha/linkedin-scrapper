@@ -18,6 +18,7 @@
   "usePublicSearch": true,
   "timePosted": "past24h",
   "enrichJobDetails": true,
+  "startupsOnly": false,
   "outputDir": "out",
   "email": {
     "smtpHost": "",

@@ -1,6 +1,7 @@
 import { chromium } from 'playwright';
 import { canonicalizeLinkedInJobLink, extractLinkedInJobId } from './deduplicator.js';
 import { extractTechStack } from './techStack.js';
+import { hasStartupBuzzwordsInDescription } from './startupFilter.js';
 
 const randomInRange = (min, max) => Math.random() * (max - min) + min;
 const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
@@ -478,15 +479,20 @@ export async function scrapeLinkedInJobs(options, globalSeenData = null) {
 
         const stack = extractTechStack(descriptionText);
         job.techStack = stack.join(', ');
+        job.startupSignalsFromDescription = hasStartupBuzzwordsInDescription(descriptionText);
       } catch {
         job.techStack = job.techStack || '';
+        job.startupSignalsFromDescription = false;
       }
 
       // Small delay between job pages to reduce blocking risk
       await sleep(randomInRange(800, 1400));
     }
   } else {
-    for (const job of allJobs) job.techStack = job.techStack || '';
+    for (const job of allJobs) {
+      job.techStack = job.techStack || '';
+      job.startupSignalsFromDescription = false;
+    }
   }
 
   await browser.close();
