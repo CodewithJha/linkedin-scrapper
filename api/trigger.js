@@ -14,7 +14,7 @@ export default async function handler(req, res) {
     return res.status(500).json({ error: 'GitHub token not configured' });
   }
 
-  const { keywords, location, results, timePosted, startupsOnly } = req.body || {};
+  const { keywords, location, results, timePosted } = req.body || {};
 
   try {
     const response = await fetch(
@@ -33,8 +33,7 @@ export default async function handler(req, res) {
             keywords: keywords || 'data engineer',
             location: location || 'India',
             results: String(results || 40),
-            timePosted: timePosted || 'past24h',
-            startupsOnly: startupsOnly === true ? 'true' : 'false'
+            timePosted: timePosted || 'past24h'
           }
         })
       }

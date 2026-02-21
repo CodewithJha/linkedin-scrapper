@@ -533,32 +533,6 @@
         -webkit-appearance: none;
       }
 
-      input[type="checkbox"] {
-        width: 20px;
-        height: 20px;
-        min-width: 20px;
-        min-height: 20px;
-        padding: 0;
-        margin: 0;
-        cursor: pointer;
-        appearance: auto;
-        -webkit-appearance: checkbox;
-        accent-color: var(--accent-cyan);
-      }
-
-      .checkbox-row {
-        flex-direction: row;
-        align-items: center;
-        gap: 12px;
-      }
-
-      .checkbox-label {
-        margin-bottom: 0;
-        text-transform: none;
-        cursor: pointer;
-        user-select: none;
-      }
-
       input::placeholder {
         color: var(--text-muted);
       }
@@ -978,10 +952,6 @@
               </select>
             </div>
 
-            <div class="form-group full-width checkbox-row">
-              <input type="checkbox" id="startupsOnly" />
-              <label for="startupsOnly" class="checkbox-label">Startups</label>
-            </div>
           </div>
           
           <button class="btn btn-primary" id="run-btn" onclick="triggerScrape()">
@@ -1215,7 +1185,6 @@
         const location = document.getElementById('location').value.trim() || 'India';
         const results = document.getElementById('results').value || '40';
         const timePosted = document.getElementById('timePosted').value;
-        const startupsOnly = document.getElementById('startupsOnly') ? document.getElementById('startupsOnly').checked : false;
 
         btn.disabled = true;
         btn.innerHTML = '<span class="spinner"></span> Starting...';
@@ -1224,7 +1193,7 @@
           const res = await fetch('/api/trigger', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ keywords, location, results, timePosted, startupsOnly })
+            body: JSON.stringify({ keywords, location, results, timePosted })
           });
 
           const data = await res.json();

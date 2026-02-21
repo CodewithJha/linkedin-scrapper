@@ -57,8 +57,6 @@ const defaultConfig = {
   // Enrich each job by visiting the job page and extracting a best-effort tech stack from the description.
   enrichJobDetails: true,
   outputDir: 'out',
-  // When true, filter results to jobs that look like startups (blocklist + name/description signals)
-  startupsOnly: false,
   // Optional keyword filters for smarter targeting
   // These can be overridden in config.json
   includeKeywords: [], // e.g. ["python", "spark", "etl"]

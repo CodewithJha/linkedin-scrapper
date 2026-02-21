@@ -24,10 +24,6 @@ on:
         description: 'Time filter (past24h, pastWeek, any)'
         required: false
         default: ''
-      startupsOnly:
-        description: 'Filter to startup-likely companies only'
-        required: false
-        default: 'false'
 
 permissions:
   contents: write
@@ -66,7 +62,6 @@ jobs:
           LOCATION="${{ github.event.inputs.location }}"
           RESULTS="${{ github.event.inputs.results }}"
           TIME_POSTED="${{ github.event.inputs.timePosted }}"
-          STARTUPS_ONLY="${{ github.event.inputs.startupsOnly }}"
           
           # Use Node.js to merge config
           node -e "
@@ -78,7 +73,6 @@ jobs:
             if ('$LOCATION') config.location = '$LOCATION';
             if ('$RESULTS' && !isNaN(parseInt('$RESULTS'))) config.resultsPerSession = parseInt('$RESULTS');
             if ('$TIME_POSTED') config.timePosted = '$TIME_POSTED';
-            if ('$STARTUPS_ONLY' === 'true') config.startupsOnly = true;
             
             // Always set headless and output
             config.headless = true;

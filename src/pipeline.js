@@ -3,7 +3,6 @@ import { scrapeLinkedInJobs } from './scraper.js';
 import { writeCsv } from './fileWriter.js';
 import { sendResults } from './mailer.js';
 import { loadSeenJobs, markJobsAsSeen, filterNewJobs } from './deduplicator.js';
-import { filterStartupJobs } from './startupFilter.js';
 
 export async function runSession(config) {
   const { keywords, location, resultsPerSession, outputDir, email, linkedInCookie, usePublicSearch, headless } =
@@ -31,20 +30,7 @@ export async function runSession(config) {
   );
 
   // Extra safety: filter again at pipeline level (covers any scraper edge cases)
-  let jobs = filterNewJobs(scraped, seenData);
-
-  // Optional: keep only jobs that look like startups (blocklist + name/description signals)
-  if (config.startupsOnly && jobs.length > 0) {
-    jobs = filterStartupJobs(jobs);
-    console.log(`[pipeline] startupsOnly: filtered to ${jobs.length} startup-likely jobs`);
-  }
-
-  // Set isLikelyStartup for CSV when we applied startup filter (all kept jobs are likely startup)
-  if (config.startupsOnly) {
-    jobs.forEach((j) => { j.isLikelyStartup = true; });
-  } else {
-    jobs.forEach((j) => { j.isLikelyStartup = false; });
-  }
+  const jobs = filterNewJobs(scraped, seenData);
 
   // Only save if we got jobs
   if (jobs.length > 0) {

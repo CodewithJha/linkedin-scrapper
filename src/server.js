@@ -111,12 +111,11 @@ app.get('/api/files', (_req, res) => {
 });
 
 app.post('/api/run', async (req, res) => {
-  const { keywords, location, resultsPerSession, startupsOnly } = req.body || {};
+  const { keywords, location, resultsPerSession } = req.body || {};
   const override = {};
   if (keywords) override.keywords = keywords;
   if (location) override.location = location;
   if (resultsPerSession) override.resultsPerSession = resultsPerSession;
-  if (typeof startupsOnly === 'boolean') override.startupsOnly = startupsOnly;
 
   if (isRunning) {
     return res.status(409).json({ status: 'busy' });
