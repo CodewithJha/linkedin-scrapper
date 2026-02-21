@@ -1273,7 +1273,11 @@
     "https://uk.linkedin.com/jobs/view/python-software-engineer-at-prima-4149696449",
     "https://br.linkedin.com/jobs/view/engenheiro-reparo-e-manutencao-i-at-weatherford-4375882662",
     "https://co.linkedin.com/jobs/view/data-pipeline-engineer-at-emma-of-torre-ai-4373576347",
-    "https://ca.linkedin.com/jobs/view/data-pipeline-engineer-12-month-contract-at-richardson-wealth-4328262168"
+    "https://ca.linkedin.com/jobs/view/data-pipeline-engineer-12-month-contract-at-richardson-wealth-4328262168",
+    "https://in.linkedin.com/jobs/view/data-engineer-gcp-fulltime-with-fortune-500-company-at-harp-4373752004",
+    "https://in.linkedin.com/jobs/view/maintenance-engineer-at-envalior-4367205814",
+    "https://in.linkedin.com/jobs/view/project-engineer-at-the-forward-foundation-4373734952",
+    "https://in.linkedin.com/jobs/view/engineer-ngas-at-renault-nissan-technology-business-centre-india-4374929820"
   ],
   "titleCompanyKeys": [
     "software engineer internship | frontend|ramp",
@@ -2547,8 +2551,12 @@
     "python software engineer|prima",
     "engenheiro reparo e manutencao i|weatherford",
     "data/pipeline engineer|emma of torre.ai",
-    "data pipeline engineer (12-month contract )|richardson wealth"
+    "data pipeline engineer (12-month contract )|richardson wealth",
+    "data engineer gcp (fulltime with fortune 500 company)|harp",
+    "maintenance engineer|envalior",
+    "project engineer|the forward foundation",
+    "engineer, ngas|renault nissan technology & business centre india"
   ],
-  "lastUpdated": "2026-02-21T07:07:52.162Z",
-  "totalCount": 1272
+  "lastUpdated": "2026-02-21T14:32:39.442Z",
+  "totalCount": 1276
 }
