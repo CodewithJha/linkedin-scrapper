@@ -163,6 +163,6 @@ Delete `data/seen-jobs.json` to reset history; it is recreated on the next run.
 
 ---
 
-## License
+## License. 
 
 This project is for **personal use**. Add an explicit license **(e.g. MIT)** and Give the **Credits** if You're cloning the Repo and using it for your Personal usecase :)
