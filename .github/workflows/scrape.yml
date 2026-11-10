@@ -28,18 +28,23 @@ on:
 permissions:
   contents: write
 
+# One scrape at a time. Overlapping runs rebase-conflict on data/seen-jobs.json.
+concurrency:
+  group: linkedin-scrape
+  cancel-in-progress: false
+
 jobs:
   scrape:
     runs-on: ubuntu-latest
     
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
       
       - name: Setup Node.js
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v5
         with:
-          node-version: '20'
+          node-version: '22'
           cache: 'npm'
       
       - name: Install dependencies
