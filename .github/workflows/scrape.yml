@@ -5,11 +5,6 @@ on:
   schedule:
     - cron: '0 6 * * *'
   
-  # Temporary verification trigger. The agent token cannot call
-  # workflow_dispatch (actions:write is denied). Removed after the run.
-  push:
-    branches: [main]
-
   # Allow manual trigger with custom inputs
   workflow_dispatch:
     inputs:
